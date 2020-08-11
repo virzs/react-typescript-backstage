@@ -9,12 +9,14 @@ function App() {
     <div className="APP">
       <BrowserRouter>
         <Switch>
-          <Route path="/" exact>
-            <Index></Index>
-          </Route>
-          <Route path="/about" exact>
-            <About></About>
-          </Route>
+          <Route path="/about" component={About} exact></Route>
+          <Route path="/" component={Index} exact></Route>
+          {/* 错误页面 */}
+          <Route
+            render={() => {
+              return <h1>错误</h1>;
+            }}
+          ></Route>
         </Switch>
       </BrowserRouter>
     </div>
