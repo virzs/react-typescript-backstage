@@ -1,4 +1,4 @@
-import Index from "../page/Index/Index";
+import Index from "../page/Index";
 const routes = [{
   path: "/",
   component: Index,
