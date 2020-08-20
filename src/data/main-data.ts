@@ -1,21 +1,21 @@
 export const authorData = {
-  author: "Vir",
-  introduction: "前端，主要掌握HTML5、CSS3、JavaScript、Vue。",
+  author: "Test",
+  introduction: "Test",
 };
 
 export const pageData = [
   {
-    pageName: "个人简介",
+    pageName: "Test",
     pageValue: "first",
     introduction: "这是第一页",
   },
   {
-    pageName: "职业技能",
+    pageName: "Test",
     pageValue: "second",
     introduction: "这是第二页",
   },
   {
-    pageName: "兴趣爱好",
+    pageName: "Test",
     pageValue: "third",
     introduction: "这是第三页",
   },
