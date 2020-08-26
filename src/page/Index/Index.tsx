@@ -23,6 +23,7 @@ const Index = () => {
       <p>{authorData.author}</p>
       <p>{authorData.introduction}</p>
       <VFSSList>{page}</VFSSList>
+      <a href="https://beian.miit.gov.cn/">豫ICP备18039751号</a>
     </div>
   );
 };
