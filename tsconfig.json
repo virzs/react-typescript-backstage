@@ -19,7 +19,9 @@
     "noEmit": true,
     "jsx": "react"
   },
+  "experimentalDecorators": true,
   "include": [
     "src"
-  ]
+  ],
+  "extends": "./tsconfig.paths.json"
 }
