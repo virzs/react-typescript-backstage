@@ -1,6 +1,23 @@
 export const authorData = {
-  author: "Test",
-  introduction: "Test",
+  author: "Vir",
+  introduction: "期待与你相遇",
+  links: [
+    {
+      name: "GitHub",
+      link: "https://github.com/virzs",
+      icon: "",
+    },
+    {
+      name: "bilibili",
+      link: "https://space.bilibili.com/13683365",
+      icon: "",
+    },
+    {
+      name: "博客",
+      link: "https://blog.virs.xyz",
+      icon: "",
+    },
+  ],
 };
 
 export const pageData = [
