@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@@/*": ["./*"],
+      "@/*": ["src/*"],
+      "@data": ["src/data/*"],
+      "@components": ["src/components/*"]
+    }
+  }
+}
+// 该文件用于解决compilerOptions. paths must not be set (aliased imports are not supported)的问题

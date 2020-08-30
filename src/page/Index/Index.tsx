@@ -1,28 +1,33 @@
 import React from "react";
-import { Button } from "antd";
-import { authorData, pageData } from "../../data/main-data";
-import { Link } from "react-router-dom";
+import { pageData } from "@/data/main-data";
+import VFSSList from "@/components/Full_screen_scroll/List";
+import VFSSItem from "@/components/Full_screen_scroll/Item";
+import MainInfo from "@/views/Index/mainInfo";
 
 let page = pageData.map((item, index) => {
   return (
-    <div key={index}>
+    <VFSSItem
+      key={index}
+      height={1000}
+      style={{ height: `${window.innerHeight}px` }}
+    >
       <p>{item.pageName}</p>
       <p>{item.pageValue}</p>
       <p>{item.introduction}</p>
-    </div>
+    </VFSSItem>
   );
 });
-
+console.log(window.innerHeight);
 const Index = () => {
   return (
-    <div className="App-header">
-      <Link to="/about">about</Link>
-      <p>{authorData.author}</p>
-      <p>{authorData.introduction}</p>
-      <Button type="link" href="https://blog.virs.xyz">
-        博客
-      </Button>
-      <div>{page}</div>
+    <div className="Index">
+      <VFSSList>
+        <VFSSItem>
+          <MainInfo></MainInfo>
+        </VFSSItem>
+        {page}
+      </VFSSList>
+      <a href="https://beian.miit.gov.cn/">豫ICP备18039751号</a>
     </div>
   );
 };

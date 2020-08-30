@@ -1,21 +1,38 @@
 export const authorData = {
   author: "Vir",
-  introduction: "前端，主要掌握HTML5、CSS3、JavaScript、Vue。",
+  introduction: "期待与你相遇",
+  links: [
+    {
+      name: "GitHub",
+      link: "https://github.com/virzs",
+      icon: "",
+    },
+    {
+      name: "bilibili",
+      link: "https://space.bilibili.com/13683365",
+      icon: "",
+    },
+    {
+      name: "博客",
+      link: "https://blog.virs.xyz",
+      icon: "",
+    },
+  ],
 };
 
 export const pageData = [
   {
-    pageName: "个人简介",
+    pageName: "Test",
     pageValue: "first",
     introduction: "这是第一页",
   },
   {
-    pageName: "职业技能",
+    pageName: "Test",
     pageValue: "second",
     introduction: "这是第二页",
   },
   {
-    pageName: "兴趣爱好",
+    pageName: "Test",
     pageValue: "third",
     introduction: "这是第三页",
   },
