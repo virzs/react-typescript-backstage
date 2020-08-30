@@ -7,7 +7,11 @@ export interface ItemProps {
 }
 
 const VFSSItem = (props: ItemProps) => {
-  let styles = Object.assign(props.style,{height:`${props.height}px`});
+  let height = props.height
+    ? { height: `${props.height}px` }
+    : { height: "auto" };
+  let style = props.style ? props.style : {};
+  let styles = Object.assign(style, height);
   return (
     <li className="VFSSItem" style={styles}>
       {props.children}
