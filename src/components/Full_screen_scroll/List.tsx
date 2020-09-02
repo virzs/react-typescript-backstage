@@ -15,14 +15,35 @@ const renderAnchorItem = (num: Number) => {
   });
 };
 
-const VFSSList = (props: ListProps) => {
-  let anchorNum: Number = props.children.length; //内部item个数
-  console.log(props.children);
-  return (
-    <div className="VFSSList-Box">
-      <ul className="VFSSList">{props.children}</ul>
-      <ul className="VFSSListAnchor">{renderAnchorItem(anchorNum)}</ul>
-    </div>
-  );
-};
+// const VFSSList = (props: ListProps) => {
+//   let anchorNum: Number = props.children.length; //内部item个数
+//   console.log(props.children);
+//   return (
+//     <div className="VFSSList-Box">
+//       <ul className="VFSSList">{props.children}</ul>
+//       <ul className="VFSSListAnchor">{renderAnchorItem(anchorNum)}</ul>
+//     </div>
+//   );
+// };
+
+class VFSSList extends React.Component {
+  constructor(props: ListProps) {
+    super(props);
+  }
+  componentDidMount() {
+    window.addEventListener("scroll", this.handleScroll);
+  }
+  render() {
+    let anchorNum: Number | null = React.Children.count(this.props.children);
+    return (
+      <div className="VFSSList-Box">
+        <ul className="VFSSList">{this.props.children}</ul>
+        <ul className="VFSSListAnchor">{renderAnchorItem(anchorNum)}</ul>
+      </div>
+    );
+  }
+  handleScroll = (e: any) => {
+    console.log(document.documentElement.scrollTop);
+  };
+}
 export default VFSSList;
