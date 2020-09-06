@@ -27,6 +27,7 @@ const renderAnchorItem = (num: Number) => {
 // };
 
 class VFSSList extends React.Component {
+  // eslint-disable-next-line
   constructor(props: ListProps) {
     super(props);
   }
