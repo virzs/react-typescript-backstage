@@ -1,30 +1,43 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import "./fss.scss";
 
 export interface ListProps {
   children: any;
 }
+export interface ItemProps {
+  childrenItem: ReactNode;
+}
 // 渲染锚点
-const renderAnchorItem = (num: Number) => {
-  let renderAnchorItem: Array<Number> = [];
-  for (let i = 0; i <= num; i++) {
-    renderAnchorItem.push(i);
+class RenderAnchorItem extends React.Component<ItemProps> {
+  // eslint-disable-next-line
+  constructor(props: ItemProps) {
+    super(props);
   }
-  return renderAnchorItem.map((item) => {
-    return <li key={Number(item)}>锚点</li>;
-  });
-};
-
-// const VFSSList = (props: ListProps) => {
-//   let anchorNum: Number = props.children.length; //内部item个数
-//   console.log(props.children);
-//   return (
-//     <div className="VFSSList-Box">
-//       <ul className="VFSSList">{props.children}</ul>
-//       <ul className="VFSSListAnchor">{renderAnchorItem(anchorNum)}</ul>
-//     </div>
-//   );
-// };
+  render() {
+    return (
+      <ul className="VFSSListAnchor">
+        {React.Children.map(this.props.childrenItem, (item: any, index) => {
+          if (item.props.id) {
+            return (
+              <li onClick={() => this.scrollToAnchor(item.props.id)}>锚点</li>
+            );
+          }
+        })}
+      </ul>
+    );
+  }
+  scrollToAnchor = (id: String) => {
+    if (id) {
+      let ele = document.querySelector(`#${id}`);
+      if (ele) {
+        ele.scrollIntoView({
+          block: "start",
+          behavior: "smooth",
+        });
+      }
+    }
+  };
+}
 
 class VFSSList extends React.Component {
   // eslint-disable-next-line
@@ -35,16 +48,17 @@ class VFSSList extends React.Component {
     window.addEventListener("scroll", this.handleScroll);
   }
   render() {
-    let anchorNum: Number | null = React.Children.count(this.props.children);
+    // let anchorNum: Number | null = React.Children.count(this.props.children);
     return (
       <div className="VFSSList-Box">
         <ul className="VFSSList">{this.props.children}</ul>
-        <ul className="VFSSListAnchor">{renderAnchorItem(anchorNum)}</ul>
+        <RenderAnchorItem childrenItem={this.props.children}></RenderAnchorItem>
       </div>
     );
   }
   handleScroll = (e: any) => {
     console.log(document.documentElement.scrollTop);
+    // console.log(this.props.children[0]);
   };
 }
 export default VFSSList;
