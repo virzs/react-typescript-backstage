@@ -1,8 +1,8 @@
 import React from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
-import Index from "./page/Index";
-import About from "./page/About";
-import Error from "./page/Error";
+import Index from "@/page/Index";
+import About from "@/page/About";
+import Error from "@/page/Error";
 import "./App.less";
 
 function App() {
