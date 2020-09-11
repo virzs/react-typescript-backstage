@@ -11,4 +11,19 @@
 .VFSSList-Box .VFSSListAnchor {
   position: fixed;
   top: 50%;
+  right: 10px;
+  list-style: none;
+  margin-bottom: 0;
+}
+
+.VFSSList-Box .VFSSListAnchor li {
+  width: 10px;
+  height: 10px;
+  background: #ffffff;
+  margin: 5px 0;
+  transition: 0.3s;
+}
+
+.VFSSList-Box .VFSSListAnchor li.active {
+  background: #979797;
 }

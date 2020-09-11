@@ -7,26 +7,20 @@ export interface ListProps {
 export interface ItemProps {
   childrenItem: ReactNode;
 }
+
+export interface ItemState {
+  activeItem: number | null;
+}
 // 渲染锚点
-class RenderAnchorItem extends React.Component<ItemProps> {
+class RenderAnchorItem extends React.Component<ItemProps, ItemState> {
   // eslint-disable-next-line
   constructor(props: ItemProps) {
     super(props);
+    this.state = {
+      activeItem: null,
+    };
   }
-  render() {
-    return (
-      <ul className="VFSSListAnchor">
-        {React.Children.map(this.props.childrenItem, (item: any, index) => {
-          if (item.props.id) {
-            return (
-              <li onClick={() => this.scrollToAnchor(item.props.id)}>锚点</li>
-            );
-          }
-        })}
-      </ul>
-    );
-  }
-  scrollToAnchor = (id: String) => {
+  scrollToAnchor = (id: String, index: number) => {
     if (id) {
       let ele = document.querySelector(`#${id}`);
       if (ele) {
@@ -36,7 +30,24 @@ class RenderAnchorItem extends React.Component<ItemProps> {
         });
       }
     }
+    this.setState({ activeItem: index });
   };
+  render() {
+    return (
+      <ul className="VFSSListAnchor">
+        {React.Children.map(this.props.childrenItem, (item: any, index) => {
+          if (item.props.id) {
+            return (
+              <li
+                className={this.state.activeItem === index ? "active" : ""}
+                onClick={() => this.scrollToAnchor(item.props.id, index)}
+              ></li>
+            );
+          }
+        })}
+      </ul>
+    );
+  }
 }
 
 class VFSSList extends React.Component {
