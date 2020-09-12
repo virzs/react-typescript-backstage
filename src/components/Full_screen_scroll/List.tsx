@@ -1,8 +1,10 @@
 import React, { ReactNode } from "react";
 import "./fss.scss";
+import { boundingClientRect } from "@@/src/utils/utils";
 
 export interface ListProps {
   children: any;
+  onScroll?: Function;
 }
 export interface ItemProps {
   childrenItem: ReactNode;
@@ -17,7 +19,7 @@ class RenderAnchorItem extends React.Component<ItemProps, ItemState> {
   constructor(props: ItemProps) {
     super(props);
     this.state = {
-      activeItem: null,
+      activeItem: 0,
     };
   }
   scrollToAnchor = (id: String, index: number) => {
@@ -31,6 +33,23 @@ class RenderAnchorItem extends React.Component<ItemProps, ItemState> {
       }
     }
     this.setState({ activeItem: index });
+  };
+  componentDidMount() {
+    window.addEventListener("scroll", this.handleScroll);
+  }
+  componentWillUnmount() {
+    window.removeEventListener("scroll", this.handleScroll);
+  }
+  handleScroll = (e: any) => {
+    React.Children.forEach(this.props.childrenItem, (item: any, index) => {
+      if (item.props) {
+        let active = boundingClientRect(
+          document.querySelector(`#${item.props.id}`)
+        );
+        console.log(active);
+        if (active) this.setState({ activeItem: index });
+      }
+    });
   };
   render() {
     return (
@@ -50,13 +69,10 @@ class RenderAnchorItem extends React.Component<ItemProps, ItemState> {
   }
 }
 
-class VFSSList extends React.Component {
+class VFSSList extends React.Component<ListProps> {
   // eslint-disable-next-line
   constructor(props: ListProps) {
     super(props);
-  }
-  componentDidMount() {
-    window.addEventListener("scroll", this.handleScroll);
   }
   render() {
     // let anchorNum: Number | null = React.Children.count(this.props.children);
@@ -67,9 +83,5 @@ class VFSSList extends React.Component {
       </div>
     );
   }
-  handleScroll = (e: any) => {
-    console.log(document.documentElement.scrollTop);
-    // console.log(this.props.children[0]);
-  };
 }
 export default VFSSList;
