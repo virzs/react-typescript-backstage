@@ -4,10 +4,13 @@ import { boundingClientRect } from "@@/src/utils/utils";
 
 export interface ListProps {
   children: any;
+  onClick?: Function;
   onScroll?: Function;
 }
 export interface ItemProps {
   childrenItem: ReactNode;
+  onClick?: Function;
+  onScroll?: Function;
 }
 
 export interface ItemState {
@@ -22,6 +25,12 @@ class RenderAnchorItem extends React.Component<ItemProps, ItemState> {
       activeItem: 0,
     };
   }
+  componentDidMount() {
+    window.addEventListener("scroll", this.handleScroll);
+  }
+  componentWillUnmount() {
+    window.removeEventListener("scroll", this.handleScroll);
+  }
   scrollToAnchor = (id: String, index: number) => {
     if (id) {
       let ele = document.querySelector(`#${id}`);
@@ -30,36 +39,29 @@ class RenderAnchorItem extends React.Component<ItemProps, ItemState> {
           block: "start",
           behavior: "smooth",
         });
+        this.setState({ activeItem: index });
+        this.props.onClick!(ele, index);
       }
     }
-    this.setState({ activeItem: index });
   };
-  componentDidMount() {
-    window.addEventListener("scroll", this.handleScroll);
-  }
-  componentWillUnmount() {
-    window.removeEventListener("scroll", this.handleScroll);
-  }
   handleScroll = (e: any) => {
     // 循环children改变选中状态
     React.Children.forEach(
       this.props.childrenItem,
       (item: any, index: number) => {
-        if (item.props) {
-          let active = boundingClientRect(
-            document.querySelector(`#${item.props.id}`)
-          );
-          /**
-           * 锚点滚动监听及解决刷新页面锚点失效的问题 ↓
-           */
-          if (active) {
-            this.setState({ activeItem: index });
-            window.sessionStorage.setItem("pageAnchor", index.toString());
-          } else {
-            let storageTtem = window.sessionStorage.getItem("pageAnchor");
-            this.setState({ activeItem: Number(storageTtem) });
-          }
+        let ele = document.querySelector(`#${item.props.id}`);
+        let active = boundingClientRect(ele);
+        /**
+         * 锚点滚动监听及解决刷新页面锚点失效的问题 ↓
+         */
+        if (active) {
+          this.setState({ activeItem: index });
+          window.sessionStorage.setItem("pageAnchor", index.toString());
+        } else {
+          let storageTtem = window.sessionStorage.getItem("pageAnchor");
+          this.setState({ activeItem: Number(storageTtem) });
         }
+        this.props.onScroll!(ele, index);
       }
     );
   };
@@ -89,12 +91,23 @@ class VFSSList extends React.Component<ListProps> {
   constructor(props: ListProps) {
     super(props);
   }
+  //锚点点击事件
+  handleClick = (ele: Element, index: number) => {
+    if (this.props.onClick) this.props.onClick(ele, index);
+  };
+  //页面滚动事件
+  handleScroll = (ele: Element, index: number) => {
+    if (this.props.onScroll) this.props.onScroll(ele, index);
+  };
   render() {
-    // let anchorNum: Number | null = React.Children.count(this.props.children);
     return (
       <div className="VFSSList-Box">
         <ul className="VFSSList">{this.props.children}</ul>
-        <RenderAnchorItem childrenItem={this.props.children}></RenderAnchorItem>
+        <RenderAnchorItem
+          onClick={this.handleClick}
+          onScroll={this.handleScroll}
+          childrenItem={this.props.children}
+        ></RenderAnchorItem>
       </div>
     );
   }
