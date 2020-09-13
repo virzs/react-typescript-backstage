@@ -4,6 +4,7 @@ export interface ItemProps {
   children: any;
   style?: Object;
   height?: Number;
+  id: string;
 }
 
 const VFSSItem = (props: ItemProps) => {
@@ -13,10 +14,9 @@ const VFSSItem = (props: ItemProps) => {
   let style = props.style ? props.style : {};
   let styles = Object.assign(style, height);
   return (
-    <li className="VFSSItem" style={styles}>
+    <li id={props.id} className="VFSSItem" style={styles}>
       {props.children}
     </li>
   );
 };
-
 export default VFSSItem;

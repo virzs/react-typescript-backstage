@@ -1,3 +1,4 @@
+//作者信息
 export const authorData = {
   author: "Vir",
   introduction: "期待与你相遇",
@@ -19,7 +20,14 @@ export const authorData = {
     },
   ],
 };
-
+//推广信息
+export const promoteData = [
+  {
+    name: "阿里云服务器",
+    link: "https://www.aliyun.com/minisite/goods?userCode=mmrsmv33",
+  },
+];
+//首页页面信息
 export const pageData = [
   {
     pageName: "Test",

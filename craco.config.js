@@ -23,6 +23,8 @@ module.exports = {
       "@": pathResolve("src"),
       "@data": pathResolve("src/data"),
       "@components": pathResolve("src/components"),
+      "@utils": pathResolve("src/utils"),
+      "@page": pathResolve("src/page"),
     },
   },
 };
