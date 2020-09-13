@@ -25,16 +25,7 @@ export const boundingClientRect = (ele: Element | null) => {
   let rect = ele.getBoundingClientRect();
   let rectTop = rect.top;
   let rectBottom = rect.bottom;
-  let isTopInWindow = 0 < rectTop && rectTop < winHeight;
-  let isBottomInWindow = 0 < rectBottom && rectBottom <= winHeight;
-  // let all = rectTop == 0;
-  console.log(
-    "获取是否处于可视范围",
-    rectTop,
-    rectBottom,
-    winHeight,
-    isTopInWindow,
-    isBottomInWindow
-  );
+  let isTopInWindow = 0 <= rectTop && rectTop <= winHeight * 0.1; //元素位于可视范围顶部距离是否小于一定范围
+  let isBottomInWindow = 0 <= rectBottom && rectBottom <= winHeight * 0.1;
   return isTopInWindow || isBottomInWindow;
 };

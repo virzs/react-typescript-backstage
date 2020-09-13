@@ -41,29 +41,44 @@ class RenderAnchorItem extends React.Component<ItemProps, ItemState> {
     window.removeEventListener("scroll", this.handleScroll);
   }
   handleScroll = (e: any) => {
-    React.Children.forEach(this.props.childrenItem, (item: any, index) => {
-      if (item.props) {
-        let active = boundingClientRect(
-          document.querySelector(`#${item.props.id}`)
-        );
-        console.log(active);
-        if (active) this.setState({ activeItem: index });
+    // 循环children改变选中状态
+    React.Children.forEach(
+      this.props.childrenItem,
+      (item: any, index: number) => {
+        if (item.props) {
+          let active = boundingClientRect(
+            document.querySelector(`#${item.props.id}`)
+          );
+          /**
+           * 锚点滚动监听及解决刷新页面锚点失效的问题 ↓
+           */
+          if (active) {
+            this.setState({ activeItem: index });
+            window.sessionStorage.setItem("pageAnchor", index.toString());
+          } else {
+            let storageTtem = window.sessionStorage.getItem("pageAnchor");
+            this.setState({ activeItem: Number(storageTtem) });
+          }
+        }
       }
-    });
+    );
   };
   render() {
     return (
       <ul className="VFSSListAnchor">
-        {React.Children.map(this.props.childrenItem, (item: any, index) => {
-          if (item.props.id) {
-            return (
-              <li
-                className={this.state.activeItem === index ? "active" : ""}
-                onClick={() => this.scrollToAnchor(item.props.id, index)}
-              ></li>
-            );
+        {React.Children.map(
+          this.props.childrenItem,
+          (item: any, index: number) => {
+            if (item.props.id) {
+              return (
+                <li
+                  className={this.state.activeItem === index ? "active" : ""}
+                  onClick={() => this.scrollToAnchor(item.props.id, index)}
+                ></li>
+              );
+            }
           }
-        })}
+        )}
       </ul>
     );
   }
