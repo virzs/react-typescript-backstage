@@ -26,4 +26,5 @@
 
 .VFSSList-Box .VFSSListAnchor li.active {
   background: #979797;
+  width: 20px;
 }

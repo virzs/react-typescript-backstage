@@ -19,13 +19,10 @@ let page = pageData.map((item, index) => {
     </VFSSItem>
   );
 });
-const getScroll = (data: Object) => {
-  // console.log("子传父", data);
-};
 const Index = () => {
   return (
     <div className="Index">
-      <VFSSList onScroll={getScroll}>
+      <VFSSList>
         <VFSSItem id={`V${getId(6)}`}>
           <MainInfo></MainInfo>
         </VFSSItem>
