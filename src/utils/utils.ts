@@ -27,5 +27,15 @@ export const boundingClientRect = (ele: Element | null) => {
   let rectBottom = rect.bottom;
   let isTopInWindow = 0 <= rectTop && rectTop <= winHeight * 0.1; //元素位于可视范围顶部距离是否小于一定范围
   let isBottomInWindow = 0 <= rectBottom && rectBottom <= winHeight * 0.1;
+  let timer = undefined;
+  clearTimeout(timer);
+  if (0 <= rectTop && rectTop <= winHeight * 0.3) {
+    timer = setTimeout(() => {
+      ele.scrollIntoView({
+        block: "start",
+        behavior: "smooth",
+      });
+    }, 3000);
+  }
   return isTopInWindow || isBottomInWindow;
 };
