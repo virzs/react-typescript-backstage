@@ -23,7 +23,7 @@ const Index = () => {
   return (
     <div className="Index">
       <VFSSList>
-        <VFSSItem id={`V${getId(6)}`}>
+        <VFSSItem id={`V${getId(6)}`} key="0">
           <MainInfo></MainInfo>
         </VFSSItem>
         {page}
