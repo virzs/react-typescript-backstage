@@ -33,10 +33,10 @@ const request = (options: requestOptionsType) => {
       withCredentials: true, //跨域请求时是否需要使用凭证
     })
       .then((res) => {
-        if (res.data.code === 200) {
-          resolve(res.data);
+        if (res.status === 200) {
+          resolve(res);
         }
-        if (res.data.code === 401) {
+        if (res.status === 401) {
           console.log(res);
           reject(res);
         }
