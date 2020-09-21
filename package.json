@@ -13,9 +13,13 @@
     "@types/react-dom": "^16.9.8",
     "@types/react-router": "^5.1.8",
     "antd": "^4.3.5",
+    "axios": "^0.20.0",
     "craco-less": "^1.17.0",
+    "cross-env": "^7.0.2",
     "node-sass": "^4.14.1",
+    "prop-types": "^15.7.2",
     "react": "^16.13.1",
+    "react-axios": "^2.0.3",
     "react-dom": "^16.13.1",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
@@ -24,6 +28,7 @@
   },
   "scripts": {
     "start": "craco start",
+    "start.local": "craco start --mode local",
     "build": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject"
