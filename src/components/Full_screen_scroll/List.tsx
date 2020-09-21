@@ -144,7 +144,7 @@ class VFSSList extends React.Component<ListProps> {
   render() {
     return (
       <div className="VFSSList-Box">
-        <ul className="VFSSList">{this.props.children}</ul>
+        <div className="VFSSList">{this.props.children}</div>
         <RenderAnchorItem
           onClick={this.handleClick}
           onScroll={this.handleScroll}

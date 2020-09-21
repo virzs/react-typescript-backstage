@@ -14,9 +14,9 @@ const VFSSItem = (props: ItemProps) => {
   let style = props.style ? props.style : {};
   let styles = Object.assign(style, height);
   return (
-    <li id={props.id} className="VFSSItem" style={styles}>
+    <section id={props.id} className="VFSSItem" style={styles}>
       {props.children}
-    </li>
+    </section>
   );
 };
 export default VFSSItem;
