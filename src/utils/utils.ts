@@ -29,3 +29,42 @@ export const boundingClientRect = (ele: Element | null) => {
   let isBottomInWindow = 0 <= rectBottom && rectBottom <= winHeight * 0.1;
   return isTopInWindow || isBottomInWindow;
 };
+
+//获取地理位置信息
+export const getGeolocation = (
+  successCallback: PositionCallback,
+  errorCallback: PositionErrorCallback
+) => {
+  let geolocation = navigator.geolocation;
+  let options = {
+    enableHighAccuracy: false, //是否启用高精确度模式
+    timeout: 10000, //超时时间
+    maximumAge: 3600000, //重新获取信息时间
+  };
+  if (geolocation) {
+    /**
+     * successCallback返回内容
+     * {
+     *    coords :{
+     *        accuracy(	latitude和longitude属性的精确性，单位是m)
+     *        altitude(海拔)
+     *        altitudeAccuracy(	altitude属性的精确性)
+     *        heading(朝向，即设备正北顺时针前进的方位)
+     *        latitude(纬度)
+     *        longitude(经度)
+     *        speed(设备外部环境的移动速度，单位是m/s)
+     *    },
+     *    timestamp(获取地理位置信息的时间)
+     * }
+     */
+    /**errorCallback返回内容
+     * {
+     *    code(整数，错误编号)
+     *    message(错误描述)
+     * }
+     */
+    geolocation.getCurrentPosition(successCallback, errorCallback, options);
+  } else {
+    console.log("Error：当前浏览器不支持获取地理位置信息");
+  }
+};
