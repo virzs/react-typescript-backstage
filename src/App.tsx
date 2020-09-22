@@ -4,7 +4,7 @@ import Index from "@/page/Index";
 import About from "@/page/About";
 import Error from "@/page/Error";
 import "./App.less";
-console.log(process.env.REACT_APP_BASE_URL);
+
 function App() {
   return (
     <div className="APP">
