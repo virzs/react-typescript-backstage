@@ -38,16 +38,23 @@ class MainInfo extends React.Component<any, stateTypes> {
         className="main-info"
         style={{
           height: `${window.innerHeight}px`,
-          backgroundImage: `url("http://cn.bing.com${
-            this.state.bingImage.images
-              ? this.state.bingImage.images[0].url
-              : ""
-          }")`,
         }}
       >
-        <p className="author">{"我是" + authorData.author}</p>
-        <SpotlightText size={58}>{authorData.introduction}</SpotlightText>
-        <ul>{Links}</ul>
+        <div
+          className="bg"
+          style={{
+            backgroundImage: `url("http://cn.bing.com${
+              this.state.bingImage.images
+                ? this.state.bingImage.images[0].url
+                : ""
+            }")`,
+          }}
+        ></div>
+        <div className="content">
+          <p className="author">{"我是" + authorData.author}</p>
+          <SpotlightText size={58}>{authorData.introduction}</SpotlightText>
+          <ul>{Links}</ul>
+        </div>
       </div>
     );
   }
