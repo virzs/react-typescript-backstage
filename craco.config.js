@@ -19,12 +19,13 @@ module.exports = {
   ],
   webpack: {
     alias: {
-      "@@": pathResolve("."),
       "@": pathResolve("src"),
+      "@public": pathResolve("public"),
       "@data": pathResolve("src/data"),
       "@components": pathResolve("src/components"),
       "@utils": pathResolve("src/utils"),
       "@page": pathResolve("src/page"),
+      "@@": pathResolve("."),
     },
   },
 };
