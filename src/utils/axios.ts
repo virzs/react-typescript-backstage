@@ -42,6 +42,7 @@ const request = (options: requestOptionsType) => {
         }
       })
       .catch((err) => {
+        reject(err);
         if (err.response) {
           switch (err.response.status) {
             case "403":
