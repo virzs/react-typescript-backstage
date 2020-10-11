@@ -17,7 +17,7 @@ const request = (options: requestOptionsType) => {
       ...defaultOptions,
       ...options,
     };
-    Object.assign(
+    const headers = Object.assign(
       {
         // 在此处添加默认headers
       },
@@ -28,7 +28,7 @@ const request = (options: requestOptionsType) => {
       url: requestOptions.url,
       data: requestOptions.data,
       params: requestOptions.params,
-      headers: requestOptions.headers,
+      headers: headers,
       timeout: 10000, //超时毫秒数
       withCredentials: true, //跨域请求时是否需要使用凭证
     })

@@ -13,6 +13,26 @@ module.exports = function (app) {
     })
   );
   app.use(
+    createProxyMiddleware("/heWeather", {
+      target: "https://devapi.heweather.net/",
+      secure: false,
+      changeOrigin: true,
+      pathRewrite: {
+        "^/heWeather": "",
+      },
+    })
+  );
+  app.use(
+    createProxyMiddleware("/geoapi", {
+      target: "https://geoapi.heweather.net/",
+      secure: false,
+      changeOrigin: true,
+      pathRewrite: {
+        "^/geoapi": "",
+      },
+    })
+  );
+  app.use(
     createProxyMiddleware("/api", {
       target: process.env.REACT_APP_BASE_URL,
       secure: false,
