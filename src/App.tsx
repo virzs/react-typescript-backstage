@@ -3,6 +3,7 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 import Index from "@/page/Index";
 import About from "@/page/About";
 import Error from "@/page/Error";
+import Login from "@/page/Auth/login";
 import "./App.less";
 
 function App() {
@@ -12,6 +13,7 @@ function App() {
         <Switch>
           <Route path="/about" component={About} exact></Route>
           <Route path="/" component={Index} exact></Route>
+          <Route path="/auth/login" component={Login} exact></Route>
           {/* 错误页面 */}
           <Route component={Error}></Route>
         </Switch>
