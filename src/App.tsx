@@ -1,29 +1,33 @@
 import React from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
-import Index from "@/page/Index";
-import About from "@/page/About";
-import Error from "@/page/Error";
-import Login from "@/page/Auth/login";
 import Backstage from "@/page/Backstage";
 import "./App.less";
-import { backstageRoutes } from "./router/router";
+import Error from "@/page/Error";
+import { backstageRoutes, pageRoutes } from "./router/router";
 
-function Recursive(route: any[]) {
+// 处理路由数据
+function Recursive(route: any[], basePath: string = "") {
   let list: any = [];
   // 递归将路由tree转为普通列表
   let handleTreeList = (treeList: any[], parentPath: string | null = null) => {
     treeList.forEach((i) => {
       i.path = parentPath ? `${parentPath}${i.path}` : i.path;
+      let children = i.children;
+      delete i.children;
       list.push(i);
-      if (i.children) {
-        handleTreeList(i.children, i.path);
-      }
+      if (children) handleTreeList(children, i.path);
     });
   };
   handleTreeList(route);
+  console.log(list);
   return list.map((i: { path: any; component: any }) => {
     return (
-      <Route path={i.path} key={i.path} component={i.component} exact></Route>
+      <Route
+        path={`${basePath}${i.path}`}
+        key={i.path}
+        component={i.component}
+        exact
+      ></Route>
     );
   });
 }
@@ -33,10 +37,9 @@ function App() {
     <div className="APP">
       <BrowserRouter>
         <Switch>
-          <Route path="/about" component={About} exact></Route>
-          <Route path="/" component={Index} exact></Route>
-          <Route path="/auth/login" component={Login} exact></Route>
-          <Backstage>{Recursive(backstageRoutes)}</Backstage>
+          {Recursive(pageRoutes)}
+          {/* 管理后台部分路由 */}
+          <Backstage>{Recursive(backstageRoutes, "/backstage")}</Backstage>
           {/* 错误页面 */}
           <Route component={Error}></Route>
         </Switch>

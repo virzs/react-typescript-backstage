@@ -1,41 +1,51 @@
-import BackstageIndex from "@/views/Backstage/Index";
 import Backstage from "@/page/Backstage";
-import Index from "@/page/Index";
+import BackstageIndex from "@/views/Backstage/Index";
 import MdEditor from "@/components/Md_editor/MdEditor";
-const routes = [
+import Index from "@/page/Index";
+import About from "@/page/About";
+import Login from "@/page/Auth/login";
+const pageRoutes = [
   {
+    name: "首页",
     path: "/",
     component: Index,
-    childRoutes: [
-      { path: "about", component: "" },
-      { path: "inbox", component: "" },
-    ],
+    children: [],
   },
-];
-
-const backstageRoutes = [
+  {
+    name: "关于",
+    path: "/about",
+    component: About,
+    meta: {},
+  },
+  {
+    name: "登录",
+    path: "/auth/login",
+    component: Login,
+    meta: {},
+  },
   {
     name: "管理后台",
     path: "/backstage",
     component: Backstage,
     meta: {},
+  },
+];
+
+const backstageRoutes = [
+  {
+    name: "首页",
+    path: "/index",
+    component: BackstageIndex,
+    meta: {},
     children: [
       {
-        name: "首页",
-        path: "/index",
-        component: BackstageIndex,
+        name: "编辑器",
+        path: "/editor",
+        component: MdEditor,
         meta: {},
-        children: [
-          {
-            name: "编辑器",
-            path: "/editor",
-            component: MdEditor,
-            meta: {},
-          },
-        ],
       },
     ],
   },
 ];
 
-export { routes, backstageRoutes };
+export { pageRoutes, backstageRoutes };
