@@ -13,6 +13,7 @@ export interface WeatherProps {
 }
 
 class Icon extends React.Component<WeatherProps> {
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(props: WeatherProps) {
     super(props);
   }
@@ -98,7 +99,7 @@ class HeWeather extends React.Component<any, any> {
     let location = `${longitude},${latitude}`;
     getCityInfo(location)
       .then((res: any) => {
-        let data = res.data.location;
+        let data = res.location;
         this.setState({ location: data });
         this.setState({ isLoading: false });
       })
@@ -111,7 +112,7 @@ class HeWeather extends React.Component<any, any> {
     let location = `${longitude},${latitude}`;
     getHeWeather(location)
       .then((res: any) => {
-        let data = res.data.now;
+        let data = res.now;
         this.setState({ weather: data });
         this.setState({ isLoading: false });
       })

@@ -1,3 +1,4 @@
+import { message } from "antd";
 import axios from "axios";
 
 export interface requestOptionsType {
@@ -34,20 +35,33 @@ const request = (options: requestOptionsType) => {
     })
       .then((res) => {
         if (res.status === 200) {
-          resolve(res);
+          resolve(res.data);
+        }
+        if (res.status === 201) {
+          resolve(res.data);
         }
         if (res.status === 401) {
           console.log(res);
-          reject(res);
+          reject(res.data);
         }
+        resolve(res.data);
       })
       .catch((err) => {
+        reject(err);
         if (err.response) {
+          //全局错误提示信息
+          message.error(err.response.data.msg);
           switch (err.response.status) {
-            case "403":
+            case 400:
+              console.log(400);
+              break;
+            case 401:
+              console.log(401);
+              break;
+            case 403:
               console.log(403);
               break;
-            case "404":
+            case 404:
               console.log(404);
               break;
             default:

@@ -1,0 +1,12 @@
+.APP,
+.backstage-page {
+  height: 100%;
+}
+
+.backstage-page .backstage-header {
+  height: 32px;
+}
+
+.backstage-page .backstage-content {
+  padding: 10px;
+}
