@@ -9,6 +9,7 @@
       "@utils": ["src/utils/*"],
       "@page": ["src/page/*"],
       "@view": ["src/view/*"],
+      "@store": ["src/store/*"],
       "@@/*": ["./*"]
     }
   }
