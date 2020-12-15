@@ -1,76 +1,96 @@
+import { refresh } from "./../api/auth/auth";
 import { message } from "antd";
 import axios from "axios";
+import { LocalStorage } from "./storage";
 
 export interface requestOptionsType {
-  headers?: string;
+  headers?: object;
   method: any;
   url: string;
   data?: object;
   params?: object;
 }
 
-const request = (options: requestOptionsType) => {
-  return new Promise((resolve, reject) => {
-    //默认option
-    const defaultOptions = {};
-    // 合并option
-    const requestOptions = {
-      ...defaultOptions,
-      ...options,
-    };
-    const headers = Object.assign(
-      {
-        // 在此处添加默认headers
-      },
-      requestOptions.headers
-    );
-    axios({
-      method: requestOptions.method,
-      url: requestOptions.url,
-      data: requestOptions.data,
-      params: requestOptions.params,
-      headers: headers,
-      timeout: 10000, //超时毫秒数
-      withCredentials: true, //跨域请求时是否需要使用凭证
-    })
-      .then((res) => {
-        if (res.status === 200) {
-          resolve(res.data);
-        }
-        if (res.status === 201) {
-          resolve(res.data);
-        }
-        if (res.status === 401) {
-          console.log(res);
-          reject(res.data);
-        }
-        resolve(res.data);
-      })
-      .catch((err) => {
-        reject(err);
-        if (err.response) {
-          //全局错误提示信息
-          message.error(err.response.data.msg);
-          switch (err.response.status) {
-            case 400:
-              console.log(400);
-              break;
-            case 401:
-              console.log(401);
-              break;
-            case 403:
-              console.log(403);
-              break;
-            case 404:
-              console.log(404);
-              break;
-            default:
-              console.log("error");
-              break;
-          }
-        }
-      });
-  });
+const storage = new LocalStorage();
+
+let isRefreshToken = false; //是否处于需要刷新状态
+let requests: Array<any> = []; // 存储待重发请求的数组(同时发起多个请求的处理)
+
+//默认超时时间
+axios.defaults.timeout = 10000;
+
+//默认返回状态码
+axios.defaults.validateStatus = (status: number) => {
+  return status >= 200 && status <= 500;
 };
 
-export default request;
+//在请求或响应被 then 或 catch 处理前拦截。
+axios.interceptors.request.use(
+  (config) => {
+    const access_token = storage.get("access_token");
+    //本地存储中存在token且没有携带token
+    if (access_token) {
+      config.headers["access_token"] = access_token;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+//响应拦截器，处理请求后的数据
+axios.interceptors.response.use(
+  (res) => {
+    const status: number = Number(res.data.code || res.status);
+    const msg: string = res.data.msg || "未知错误";
+    const { config } = res;
+    //当前请求状态码为401及请求路径不为刷新token接口时
+    if (
+      status === 401 &&
+      config.url &&
+      !config.url.includes("/api/auth/refresh")
+    ) {
+      if (!isRefreshToken) {
+        isRefreshToken = true;
+        return refresh()
+          .then((res) => {
+            const { access_token } = res.data;
+            const storage = new LocalStorage();
+            storage.set("access_token", access_token);
+            requests.forEach((cb: any) => cb(access_token));
+            requests = []; // 重新请求完清空
+            config.headers["access_token"] = access_token;
+            return axios(config);
+          })
+          .catch((err) => {
+            message.error("登陆状态已失效，请重新登录");
+            return Promise.reject(err);
+          })
+          .finally(() => {
+            isRefreshToken = false;
+          });
+      } else {
+        // 返回未执行 resolve 的 Promise
+        return new Promise((resolve) => {
+          // 用函数形式将 resolve 存入，等待刷新后再执行
+          requests.push((token: any) => {
+            config.headers["access_token"] = token;
+            resolve(axios(config));
+          });
+        });
+      }
+    }
+    if (status !== 200) {
+      message.error(msg);
+      return Promise.reject(msg);
+    }
+    return res.data;
+  },
+  (error) => {
+    console.log(error);
+    return Promise.reject(error);
+  }
+);
+
+export default axios;

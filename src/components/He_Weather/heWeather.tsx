@@ -34,6 +34,8 @@ class Icon extends React.Component<WeatherProps> {
       ele = <div className="weather-box">正在加载天气，请稍后</div>;
     }
     if (
+      this.props.location &&
+      Object.keys(this.props.weather) &&
       this.props.location.length > 0 &&
       Object.keys(this.props.weather).length > 0 &&
       !this.props.isLoading
@@ -86,7 +88,6 @@ class HeWeather extends React.Component<any, any> {
         this.getLocalWeather(longitude, latitude);
       },
       (positionError) => {
-        console.log(positionError);
         if (positionError.code === 1) {
           this.setState({ errMsg: "用户拒绝位置权限" });
         }
@@ -103,7 +104,7 @@ class HeWeather extends React.Component<any, any> {
         this.setState({ location: data });
         this.setState({ isLoading: false });
       })
-      .catch((err) => {
+      .catch((err: any) => {
         this.setState({ isError: true });
         this.setState({ isLoading: false });
       });
@@ -116,7 +117,7 @@ class HeWeather extends React.Component<any, any> {
         this.setState({ weather: data });
         this.setState({ isLoading: false });
       })
-      .catch((err) => {
+      .catch((err: any) => {
         this.setState({ isError: true });
         this.setState({ isLoading: false });
       });
