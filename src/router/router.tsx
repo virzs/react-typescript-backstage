@@ -4,10 +4,12 @@ import Index from "@/page/Index";
 import About from "@/page/About";
 import Login from "@/page/Auth/login";
 import React from "react";
-import { Route } from "react-router";
+import { Redirect, Route } from "react-router";
 import { BrowserRouter, Switch } from "react-router-dom";
 import Backstage from "@/page/Backstage";
+import Stage from "@/page/Backstage";
 import Error from "@/page/Error";
+import { LocalStorage } from "@/utils/storage";
 const pageRoutes = [
   {
     name: "首页",
@@ -27,6 +29,18 @@ const pageRoutes = [
     component: Login,
     meta: {},
   },
+  {
+    name: "后台",
+    path: "/backstage",
+    component: Stage,
+    meta: {},
+  },
+  {
+    name: "404",
+    path: "/error/404",
+    component: Error,
+    meta: {},
+  },
 ];
 
 const backstageRoutes = [
@@ -35,6 +49,7 @@ const backstageRoutes = [
     path: "/index",
     component: BackstageIndex,
     meta: {},
+    auth: true,
     children: [
       {
         name: "编辑器",
@@ -46,27 +61,55 @@ const backstageRoutes = [
   },
 ];
 
-// 处理路由数据
-function Recursive(route: any[], basePath: string = "") {
+//递归处理路由
+function FormatRouterList(treeList: any[], parentPath: string | null = null) {
   let list: any = [];
-  // 递归将路由tree转为普通列表
-  let handleTreeList = (treeList: any[], parentPath: string | null = null) => {
-    treeList.forEach((i) => {
-      i.path = parentPath ? `${parentPath}${i.path}` : i.path;
+  if (treeList.length === 0) return list;
+  const Rec = (recList: any[], recPath: string | null = null) => {
+    recList.forEach((i) => {
+      i.path = recPath ? `${recPath}${i.path}` : i.path;
       let children = i.children;
-      list.push(i);
-      if (children) handleTreeList(children, i.path);
+      //只添加最后一级到路由
+      if (children) Rec(children, i.path);
+      else list.push(i);
     });
   };
-  handleTreeList(route);
-  return list.map((i: { path: any; component: any }) => {
+  Rec(treeList, parentPath);
+  return list;
+}
+
+//路由守卫
+class RouterGuard extends React.Component<any, any> {
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
+  constructor(props: any) {
+    super(props);
+  }
+  render() {
+    const { routerConfig, location } = this.props;
+    const { pathname } = location;
+    console.log(pathname, location, routerConfig);
+    const storage = new LocalStorage();
+    const isLogin = storage.get("refresh_token"); //根据刷新token判断是否已登录
+    if (!isLogin && routerConfig.auth) {
+      return <Redirect to="/error/404"></Redirect>;
+    }
     return (
       <Route
-        path={`${basePath}${i.path}`}
-        key={i.path}
-        component={i.component}
+        path={routerConfig.path}
+        component={routerConfig.component}
         exact
       ></Route>
+    );
+  }
+}
+
+// 处理路由数据
+function Recursive(route: any[], basePath: string = "") {
+  let list: any = FormatRouterList(route);
+  return list.map((i: { path: any; component: any }) => {
+    i.path = `${basePath}${i.path}`;
+    return (
+      <Route path={i.path} component={i.component} key={i.path} exact></Route>
     );
   });
 }
@@ -80,7 +123,7 @@ const VRouter = () => {
         <Backstage>
           <Switch>
             {Recursive(backstageRoutes, "/backstage")}
-            <Route component={Error}></Route>
+            <RouterGuard routerConfig={backstageRoutes}></RouterGuard>
           </Switch>
         </Backstage>
         {/* 错误页面 */}
