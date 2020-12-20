@@ -68,3 +68,48 @@ export const getGeolocation = (
     console.log("Error：当前浏览器不支持获取地理位置信息");
   }
 };
+
+//判断数据类型
+export const getObjType = (obj: any) => {
+  const toString = Object.prototype.toString;
+  const map = {
+    "[object Boolean]": "boolean",
+    "[object Number]": "number",
+    "[object String]": "string",
+    "[object Function]": "function",
+    "[object Array]": "array",
+    "[object Date]": "date",
+    "[object RegExp]": "regExp",
+    "[object Undefined]": "undefined",
+    "[object Null]": "null",
+    "[object Object]": "object",
+  };
+  if (obj instanceof Element) {
+    return "element";
+  }
+  return map[toString.call(obj)];
+};
+
+//数组深拷贝
+export const deepCopy = (data: any): any => {
+  let type = getObjType(data);
+  let obj;
+  if (type === "array") {
+    obj = [];
+  } else if (type === "object") {
+    obj = {};
+  } else {
+    //不再具有下一层次
+    return data;
+  }
+  if (type === "array") {
+    for (let i = 0, len = data.length; i < len; i++) {
+      obj[i] = deepCopy(data[i]);
+    }
+  } else if (type === "object") {
+    for (let key in data) {
+      obj[key] = deepCopy(data[key]);
+    }
+  }
+  return obj;
+};
