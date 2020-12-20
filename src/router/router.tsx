@@ -10,6 +10,7 @@ import Backstage from "@/page/Backstage";
 import Stage from "@/page/Backstage";
 import Error from "@/page/Error";
 import { LocalStorage } from "@/utils/storage";
+import { deepCopy } from "@/utils/utils";
 const pageRoutes = [
   {
     name: "首页",
@@ -61,20 +62,36 @@ const backstageRoutes = [
   },
 ];
 
+export interface routerType {
+  name: string;
+  path: string;
+  component: any;
+  meta: object;
+  auth: boolean;
+  children: routerType[];
+}
+
 //递归处理路由
-function FormatRouterList(treeList: any[], parentPath: string | null = null) {
+function FormatRouterList(
+  treeList: routerType[],
+  parentPath: string | null = null
+) {
   let list: any = [];
-  if (treeList.length === 0) return list;
+  let tree = deepCopy(treeList);
+  if (tree.length === 0) return list;
   const Rec = (recList: any[], recPath: string | null = null) => {
     recList.forEach((i) => {
-      i.path = recPath ? `${recPath}${i.path}` : i.path;
       let children = i.children;
+      i.path = recPath ? `${recPath}${i.path}` : i.path;
       //只添加最后一级到路由
-      if (children) Rec(children, i.path);
-      else list.push(i);
+      if (children && children.length > 0) {
+        Rec(children, i.path);
+      } else {
+        list.push(i);
+      }
     });
   };
-  Rec(treeList, parentPath);
+  Rec(tree, parentPath);
   return list;
 }
 
@@ -87,9 +104,12 @@ class RouterGuard extends React.Component<any, any> {
   render() {
     const { routerConfig, location } = this.props;
     const { pathname } = location;
-    console.log(pathname, location, routerConfig);
     const storage = new LocalStorage();
     const isLogin = storage.get("refresh_token"); //根据刷新token判断是否已登录
+    const targetRouterConfig = routerConfig.find(
+      (i: routerType) => i.path === pathname
+    );
+    console.log(pathname, location, routerConfig, targetRouterConfig);
     if (!isLogin && routerConfig.auth) {
       return <Redirect to="/error/404"></Redirect>;
     }
@@ -105,9 +125,9 @@ class RouterGuard extends React.Component<any, any> {
 
 // 处理路由数据
 function Recursive(route: any[], basePath: string = "") {
-  let list: any = FormatRouterList(route);
+  let list: any = FormatRouterList(route, basePath);
+  console.log(list, "处理后的数据");
   return list.map((i: { path: any; component: any }) => {
-    i.path = `${basePath}${i.path}`;
     return (
       <Route path={i.path} component={i.component} key={i.path} exact></Route>
     );
@@ -123,7 +143,9 @@ const VRouter = () => {
         <Backstage>
           <Switch>
             {Recursive(backstageRoutes, "/backstage")}
-            <RouterGuard routerConfig={backstageRoutes}></RouterGuard>
+            {/* <RouterGuard
+              routerConfig={FormatRouterList(backstageRoutes)}
+            ></RouterGuard> */}
           </Switch>
         </Backstage>
         {/* 错误页面 */}

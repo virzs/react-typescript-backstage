@@ -1,4 +1,5 @@
 import { backstageRoutes } from "@/router/router";
+import { deepCopy } from "@/utils/utils";
 import { Menu } from "antd";
 import SubMenu from "antd/lib/menu/SubMenu";
 import React from "react";
@@ -11,9 +12,9 @@ class VMemu extends React.Component<any, any> {
   }
   componentDidMount() {}
   handleRenderMenuItem(routes: any, parentPath: string | null = null) {
-    return routes.map((i: any) => {
-      i.path = parentPath ? `${i.path}` : i.path;
-      console.log(i.children);
+    let routesList = deepCopy(routes);
+    return routesList.map((i: any) => {
+      i.path = parentPath ? `${parentPath}${i.path}` : i.path;
       if (i.children) {
         return (
           <SubMenu title={i.name} key={i.path}>
@@ -23,13 +24,17 @@ class VMemu extends React.Component<any, any> {
       }
       return (
         <Menu.Item key={i.path}>
-          <Link to={`/backstage${i.path}`}>{i.name}</Link>
+          <Link to={`${i.path}`}>{i.name}</Link>
         </Menu.Item>
       );
     });
   }
   render() {
-    return <Menu mode="inline">{this.handleRenderMenuItem(backstageRoutes)}</Menu>;
+    return (
+      <Menu mode="inline">
+        {this.handleRenderMenuItem(backstageRoutes, "/backstage")}
+      </Menu>
+    );
   }
 }
 
