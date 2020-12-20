@@ -11,7 +11,17 @@ import Stage from "@/page/Backstage";
 import Error from "@/page/Error";
 import { LocalStorage } from "@/utils/storage";
 import { deepCopy } from "@/utils/utils";
-const pageRoutes = [
+
+export interface routerType {
+  readonly name: string;
+  readonly path: string;
+  readonly component: any;
+  readonly meta?: object;
+  readonly auth?: boolean;
+  readonly children?: Array<routerType>;
+}
+
+const pageRoutes: Array<routerType> = [
   {
     name: "首页",
     path: "/",
@@ -44,7 +54,7 @@ const pageRoutes = [
   },
 ];
 
-const backstageRoutes = [
+const backstageRoutes: Array<routerType> = [
   {
     name: "首页",
     path: "/index",
@@ -62,18 +72,9 @@ const backstageRoutes = [
   },
 ];
 
-export interface routerType {
-  name: string;
-  path: string;
-  component: any;
-  meta: object;
-  auth: boolean;
-  children: routerType[];
-}
-
 //递归处理路由
 function FormatRouterList(
-  treeList: routerType[],
+  treeList: Array<routerType>,
   parentPath: string | null = null
 ) {
   let list: any = [];
@@ -143,9 +144,9 @@ const VRouter = () => {
         <Backstage>
           <Switch>
             {Recursive(backstageRoutes, "/backstage")}
-            {/* <RouterGuard
+            <RouterGuard
               routerConfig={FormatRouterList(backstageRoutes)}
-            ></RouterGuard> */}
+            ></RouterGuard>
           </Switch>
         </Backstage>
         {/* 错误页面 */}
