@@ -5,7 +5,7 @@ import About from "@/page/About";
 import Login from "@/page/Auth/login";
 import React from "react";
 import { Redirect, Route } from "react-router";
-import { BrowserRouter, Switch } from "react-router-dom";
+import { Switch, withRouter } from "react-router-dom";
 import Backstage from "@/page/Backstage";
 import Stage from "@/page/Backstage";
 import Error from "@/page/Error";
@@ -102,6 +102,12 @@ class RouterGuard extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
   }
+  componentDidMount() {
+    console.log("组件加载", this.props.location);
+    this.props.history.listen(() => {
+      console.log("路由变化", this.props);
+    });
+  }
   render() {
     const { routerConfig, location } = this.props;
     const { pathname } = location;
@@ -127,7 +133,6 @@ class RouterGuard extends React.Component<any, any> {
 // 处理路由数据
 function Recursive(route: any[], basePath: string = "") {
   let list: any = FormatRouterList(route, basePath);
-  console.log(list, "处理后的数据");
   return list.map((i: { path: any; component: any }) => {
     return (
       <Route path={i.path} component={i.component} key={i.path} exact></Route>
@@ -135,25 +140,35 @@ function Recursive(route: any[], basePath: string = "") {
   });
 }
 
-const VRouter = () => {
-  return (
-    <BrowserRouter>
+class VRouter extends React.Component<any, any> {
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
+  constructor(props: any) {
+    super(props);
+  }
+  componentDidMount() {
+    console.log("触发刷新", this.props);
+  }
+  UNSAFE_componentWillReceiveProps(nextProps: { location: { pathname: any } }) {
+    // 判断跳转路由不等于当前路由
+    if (nextProps.location.pathname !== this.props.location.pathname) {
+      console.log("路由改变触发", nextProps, this.props);
+    }
+  }
+  render() {
+    return (
       <Switch>
         {Recursive(pageRoutes)}
         {/* 管理后台部分路由 */}
         <Backstage>
           <Switch>
             {Recursive(backstageRoutes, "/backstage")}
-            <RouterGuard
-              routerConfig={FormatRouterList(backstageRoutes)}
-            ></RouterGuard>
           </Switch>
         </Backstage>
         {/* 错误页面 */}
         <Route component={Error}></Route>
       </Switch>
-    </BrowserRouter>
-  );
-};
-
-export { VRouter, backstageRoutes, pageRoutes };
+    );
+  }
+}
+export default withRouter(VRouter);
+export { backstageRoutes, pageRoutes };
