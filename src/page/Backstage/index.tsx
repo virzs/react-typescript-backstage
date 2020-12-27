@@ -1,5 +1,6 @@
 import { Card, Layout } from "antd";
 import React from "react";
+import VAvatar from "./components/avatar";
 import VMemu from "./components/menu";
 import "./style/backstage.style.scss";
 
@@ -14,7 +15,9 @@ class Backstage extends React.Component<any, any> {
     return (
       <Layout className="backstage-page">
         {/* 顶栏 */}
-        <Header className="backstage-header"></Header>
+        <Header className="backstage-header">
+          <VAvatar></VAvatar>
+        </Header>
         <Layout>
           {/* 侧边栏 */}
           <Sider>
