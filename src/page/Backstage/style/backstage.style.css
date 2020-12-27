@@ -5,6 +5,8 @@
 
 .backstage-page .backstage-header {
   height: 32px;
+  display: flex;
+  align-items: center;
 }
 
 .backstage-page .backstage-content {
