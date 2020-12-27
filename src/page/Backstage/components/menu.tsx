@@ -1,4 +1,4 @@
-import { backstageRoutes } from "@/router/router";
+import { backstageRouterTree } from "@/data/backstage.router";
 import { deepCopy } from "@/utils/utils";
 import { Menu } from "antd";
 import SubMenu from "antd/lib/menu/SubMenu";
@@ -32,7 +32,7 @@ class VMemu extends React.Component<any, any> {
   render() {
     return (
       <Menu mode="inline">
-        {this.handleRenderMenuItem(backstageRoutes, "/backstage")}
+        {this.handleRenderMenuItem(backstageRouterTree, "/backstage")}
       </Menu>
     );
   }
