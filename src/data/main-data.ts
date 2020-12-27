@@ -45,3 +45,31 @@ export const pageData = [
     introduction: "这是第三页",
   },
 ];
+
+export const navData = [
+  {
+    label: "首页",
+    href: "/",
+    isShow: true,
+  },
+  {
+    label: "文档",
+    href: "/document",
+    isShow: true,
+  },
+  {
+    label: "随笔",
+    href: "/",
+    isShow: true,
+  },
+  {
+    label: "博客",
+    href: "/blog",
+    isShow: true,
+  },
+  {
+    label: "关于",
+    href: "/about",
+    isShow: true,
+  },
+];
