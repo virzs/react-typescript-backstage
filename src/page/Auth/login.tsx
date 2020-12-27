@@ -29,6 +29,7 @@ class Login extends React.Component<any, any> {
       message.success(res.msg);
       const action = UserLogin(res.data);
       this.props.sendAction(action);
+      this.props.history.goBack();
     });
   };
   changeLogin = (data: object, all: object) => {
