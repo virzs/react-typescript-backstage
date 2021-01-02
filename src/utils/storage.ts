@@ -20,6 +20,7 @@ export class LocalStorage {
   }
   get(name: string) {
     const value: any = this.localstorage.getItem(name);
+    if (!value) return;
     const obj = JSON.parse(value);
     switch (obj.type) {
       case "[object String]":
