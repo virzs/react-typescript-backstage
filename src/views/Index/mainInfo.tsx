@@ -28,7 +28,6 @@ class MainInfo extends React.Component<any, stateTypes> {
   getBingImageApi = () => {
     getBingImage().then((res: any) => {
       this.setState({ bingImage: res.data });
-      console.log(this.state.bingImage.images);
     });
   };
   componentDidMount() {
