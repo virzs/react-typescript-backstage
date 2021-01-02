@@ -38,7 +38,7 @@
   },
   "scripts": {
     "start": "craco start",
-    "start.local": "craco start --mode local",
+    "start:local": "craco start --mode local",
     "build": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject"
