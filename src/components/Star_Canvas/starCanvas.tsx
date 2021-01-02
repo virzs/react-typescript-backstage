@@ -66,6 +66,7 @@ class StarCanvas extends React.Component {
   tick = () => {
     this.drawing();
     requestAnimationFrame(this.drawing);
+    //TODO 解决刷新问题
   };
   render() {
     return <canvas ref={this.canvas}></canvas>;
