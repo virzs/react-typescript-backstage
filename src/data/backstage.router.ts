@@ -29,6 +29,42 @@ const backstageRouterTree: Array<routerType> = [
       },
     ],
   },
+  {
+    name: "权限",
+    path: "/authority",
+    meta: {},
+    auth: true,
+    children: [
+      {
+        name: "角色管理",
+        path: "role",
+        meta: {},
+      },
+    ],
+  },
+  {
+    name: "系统",
+    path: "/system",
+    meta: {},
+    auth: true,
+    children: [
+      {
+        name: "系统字典",
+        path: "/dict",
+        meta: {},
+      },
+      {
+        name: "业务字典",
+        path: "/dictbiz",
+        meta: {},
+      },
+      {
+        name: "系统菜单",
+        path: "/menu",
+        meta: {},
+      },
+    ],
+  },
 ];
 
 const BackstageRouter = FormatRouterList(backstageRouterTree).map(
