@@ -32,7 +32,7 @@ export const getTreePage = (page: number, pageSize: number, data?: any) => {
 export const add = (data: addType) => {
   return request({
     url: "/api/article/classify/add",
-    method: "get",
+    method: "post",
     data,
   });
 };

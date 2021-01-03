@@ -1,7 +1,8 @@
-import { getTreeList } from "@/api/article/classify/classify";
-import { Table } from "antd";
+import { add, getTreeList } from "@/api/article/classify/classify";
+import { Button, Form, Input, message, Modal, Table } from "antd";
 import React from "react";
 import dayJs from "dayjs";
+import { FormInstance } from "antd/lib/form";
 
 class List extends React.Component<any, any> {
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
@@ -39,8 +40,35 @@ class List extends React.Component<any, any> {
           key: "createTime",
           width: 200,
         },
+        {
+          title: "操作",
+          dataIndex: "operation",
+          render: (_: any, record: any) => {
+            return (
+              <>
+                <Button
+                  size="small"
+                  type="link"
+                  onClick={() => {
+                    this.addChildClassify(record.id);
+                  }}
+                >
+                  新增子分类
+                </Button>
+                <Button size="small" type="link">
+                  编辑
+                </Button>
+                <Button size="small" type="link">
+                  删除
+                </Button>
+              </>
+            );
+          },
+        },
       ],
       loading: false,
+      visible: false,
+      classifyForm: {},
     };
   }
 
@@ -71,9 +99,38 @@ class List extends React.Component<any, any> {
     });
   };
 
+  addClassify = () => {
+    this.setState({ visible: true });
+  };
+
+  addChildClassify = (id: string) => {
+    this.setState({ classifyForm: { parentId: id } });
+    this.addClassify();
+  };
+
+  formRef = React.createRef<FormInstance>();
+
+  submitModal = () => {
+    add(this.state.classifyForm).then((res) => {
+      message.success("添加分类成功");
+      this.getClassifyTreeList();
+      if (this.formRef.current) this.formRef.current.resetFields();
+      this.setState({ visible: false });
+    });
+  };
+
+  closeModal = () => {
+    this.setState({ classifyForm: {} });
+    if (this.formRef.current) this.formRef.current.resetFields();
+    this.setState({ visible: false });
+  };
+
   render() {
     return (
       <div className="classify-list-page">
+        <Button type="primary" onClick={this.addClassify}>
+          新增分类
+        </Button>
         <Table
           loading={this.state.loading}
           pagination={false}
@@ -83,6 +140,37 @@ class List extends React.Component<any, any> {
           columns={this.state.colums}
           rowKey="id"
         ></Table>
+        <Modal
+          title="分类"
+          visible={this.state.visible}
+          onOk={this.submitModal}
+          onCancel={this.closeModal}
+        >
+          <Form
+            name="classify-form"
+            size="small"
+            ref={this.formRef}
+            onValuesChange={(data: object, all: object) => {
+              const form = this.state.classifyForm;
+              this.setState({ classifyForm: { ...form, ...all } });
+            }}
+          >
+            <Form.Item label="分类名称" name="name">
+              <Input placeholder="请输入分类名称"></Input>
+            </Form.Item>
+            <Form.Item label="分类别名" name="alias">
+              <Input placeholder="请输入分类别名"></Input>
+            </Form.Item>
+            <Form.Item label="分类描述" name="introduction">
+              <Input.TextArea
+                autoSize={{ minRows: 3 }}
+                showCount={true}
+                maxLength={100}
+                placeholder="请输入分类描述"
+              ></Input.TextArea>
+            </Form.Item>
+          </Form>
+        </Modal>
       </div>
     );
   }
