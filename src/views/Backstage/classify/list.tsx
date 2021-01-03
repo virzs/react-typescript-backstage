@@ -1,7 +1,7 @@
 import { getTreeList } from "@/api/article/classify/classify";
 import { Table } from "antd";
 import React from "react";
-// import dayJs from "dayjs";
+import dayJs from "dayjs";
 
 class List extends React.Component<any, any> {
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
@@ -51,7 +51,7 @@ class List extends React.Component<any, any> {
   recursive(data: any) {
     const format = data.map((i: { children: any; createTime: any }) => {
       // console.log(dayJs(i.createTime).format("YYYY/MM/DD HH:mm:ss"), typeof i.createTime);
-      // i.createTime = dayJs(i.createTime).format("YYYY/MM/DD HH:mm:ss");
+      i.createTime = dayJs(i.createTime).format("YYYY/MM/DD HH:mm:ss");
       if (!i.children || i.children.length === 0) {
         delete i.children;
       } else {
