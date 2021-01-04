@@ -1,10 +1,11 @@
-import { add, getTreeList } from "@/api/article/classify/classify";
+import { add, edit, getTreeList } from "@/api/article/classify/classify";
 import { Button, Form, Input, message, Modal, Table } from "antd";
 import React from "react";
 import dayJs from "dayjs";
 import { FormInstance } from "antd/lib/form";
 
 class List extends React.Component<any, any> {
+  formRef = React.createRef<FormInstance>();
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(props: any) {
     super(props);
@@ -55,7 +56,13 @@ class List extends React.Component<any, any> {
                 >
                   新增子分类
                 </Button>
-                <Button size="small" type="link">
+                <Button
+                  size="small"
+                  type="link"
+                  onClick={() => {
+                    this.editChildClassify(record);
+                  }}
+                >
                   编辑
                 </Button>
                 <Button size="small" type="link">
@@ -69,6 +76,8 @@ class List extends React.Component<any, any> {
       loading: false,
       visible: false,
       classifyForm: {},
+      modalTitle: "新增分类",
+      modalType: "",
     };
   }
 
@@ -100,7 +109,17 @@ class List extends React.Component<any, any> {
   };
 
   addClassify = () => {
-    this.setState({ visible: true });
+    this.setState({ visible: true, modalTitle: "新增分类", modalType: "add" });
+  };
+
+  editChildClassify = (record: any) => {
+    if (this.formRef.current) this.formRef.current.setFieldsValue(record);
+    this.setState({
+      visible: true,
+      modalTitle: "修改分类",
+      modalType: "edit",
+      classifyForm: record,
+    });
   };
 
   addChildClassify = (id: string) => {
@@ -108,15 +127,22 @@ class List extends React.Component<any, any> {
     this.addClassify();
   };
 
-  formRef = React.createRef<FormInstance>();
-
   submitModal = () => {
-    add(this.state.classifyForm).then((res) => {
-      message.success("添加分类成功");
-      this.getClassifyTreeList();
-      if (this.formRef.current) this.formRef.current.resetFields();
-      this.setState({ visible: false });
-    });
+    if (this.state.modalType === "add") {
+      add(this.state.classifyForm).then((res) => {
+        message.success("添加分类成功");
+        this.getClassifyTreeList();
+        if (this.formRef.current) this.formRef.current.resetFields();
+        this.setState({ visible: false });
+      });
+    } else if (this.state.modalType === "edit") {
+      edit(this.state.classifyForm).then((res) => {
+        message.success("修改分类成功");
+        this.getClassifyTreeList();
+        if (this.formRef.current) this.formRef.current.resetFields();
+        this.setState({ visible: false });
+      });
+    }
   };
 
   closeModal = () => {
@@ -141,10 +167,11 @@ class List extends React.Component<any, any> {
           rowKey="id"
         ></Table>
         <Modal
-          title="分类"
+          title={this.state.modalTitle}
           visible={this.state.visible}
           onOk={this.submitModal}
           onCancel={this.closeModal}
+          forceRender={true}
         >
           <Form
             name="classify-form"

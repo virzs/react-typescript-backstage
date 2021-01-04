@@ -7,6 +7,14 @@ interface addType {
   parentId?: string;
 }
 
+interface editType {
+  id: string;
+  name: string;
+  alias?: string;
+  introduction?: string;
+  parentId?: string;
+}
+
 //获取分类树形列表
 export const getTreeList = () => {
   return request({
@@ -33,6 +41,15 @@ export const add = (data: addType) => {
   return request({
     url: "/api/article/classify/add",
     method: "post",
+    data,
+  });
+};
+
+//修改文章分类
+export const edit = (data: editType) => {
+  return request({
+    url: "/api/article/classify/edit",
+    method: "put",
     data,
   });
 };
