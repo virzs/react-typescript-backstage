@@ -1,3 +1,8 @@
 .system-menu-view {
   height: auto;
+  display: flex;
+  .menu-tree {
+    width: 200px;
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.1);
+  }
 }

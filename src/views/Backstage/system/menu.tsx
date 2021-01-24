@@ -37,12 +37,14 @@ class Menu extends React.Component<any, any> {
   render() {
     return (
       <div className="system-menu-view">
-        <Tree
-          titleRender={(nodeData: any) => {
-            return `${nodeData.name}`;
-          }}
-          treeData={this.state.menu}
-        ></Tree>
+        <div className="menu-tree">
+          <Tree
+            titleRender={(nodeData: any) => {
+              return `${nodeData.name}`;
+            }}
+            treeData={this.state.menu}
+          ></Tree>
+        </div>
         <Button>添加菜单</Button>
       </div>
     );
