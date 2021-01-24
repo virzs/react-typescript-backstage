@@ -2,7 +2,6 @@ import { treeList } from "@/api/system/menu";
 import { Button, Tree } from "antd";
 import React from "react";
 import "./styles/menu.style.scss";
-const { TreeNode } = Tree;
 
 class Menu extends React.Component<any, any> {
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
@@ -12,22 +11,21 @@ class Menu extends React.Component<any, any> {
   }
 
   //递归处理数据
-  loop = (arr: Array<object>) => {
+  loop = (arr: Array<object>): any => {
     return arr.map((item: any) => {
-      return (
-        <TreeNode title={<span>{item.name}</span>} key={item.id}>
-          {item.children && item.children.length > 0
-            ? this.loop(item.children)
-            : null}
-        </TreeNode>
-      );
+      item.key = item.id;
+      return item.children && item.children.length > 0
+        ? { ...item, children: this.loop(item.children) }
+        : item;
     });
   };
 
   getTreeList = () => {
     treeList().then((res) => {
+      let menu = this.loop(res.data);
+      console.log(menu);
       this.setState({
-        menu: res.data,
+        menu,
       });
     });
   };
@@ -39,7 +37,12 @@ class Menu extends React.Component<any, any> {
   render() {
     return (
       <div className="system-menu-view">
-        <Tree>{this.loop(this.state.menu)}</Tree>
+        <Tree
+          titleRender={(nodeData: any) => {
+            return `${nodeData.name}`;
+          }}
+          treeData={this.state.menu}
+        ></Tree>
         <Button>添加菜单</Button>
       </div>
     );
