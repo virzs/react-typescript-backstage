@@ -1,17 +1,33 @@
 .system-role-view {
+  Button {
+    margin: 0 5px 0 0;
+  }
   .handler-box {
     margin-bottom: 10px;
-    Button {
-      margin: 0 5px 0 0;
-    }
   }
   .content-box {
     display: flex;
     .role-list {
+      margin-right: 10px;
       .list {
         width: 200px;
-        margin-right: 10px;
+        .active {
+          background-color: #f5f5f5;
+        }
+        .role-item {
+          transition: 0.3s;
+          &:hover {
+            cursor: pointer;
+            background-color: #f5f5f5;
+          }
+        }
       }
+      .ant-card-body {
+        padding: 0;
+      }
+    }
+    .main-content {
+      width: 100%;
     }
   }
 }
