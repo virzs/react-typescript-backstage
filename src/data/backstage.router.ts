@@ -49,6 +49,11 @@ const backstageRouterTree: Array<routerType> = [
     auth: true,
     children: [
       {
+        name: "角色管理",
+        path: "/role",
+        meta: {},
+      },
+      {
         name: "系统字典",
         path: "/dict",
         meta: {},
