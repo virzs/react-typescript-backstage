@@ -16,3 +16,12 @@ export const getList = () => {
     method: "get",
   });
 };
+
+//角色详情
+export const getDetail = (id: string) => {
+  return request({
+    url: "/api/system/role/detail",
+    method: "get",
+    params: { roleId: id },
+  });
+};

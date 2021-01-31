@@ -1,4 +1,4 @@
-import { getList } from "@/api/system/role";
+import { getDetail, getList } from "@/api/system/role";
 import { Button, Card, Input } from "antd";
 import { Form, List } from "antd";
 import dayjs from "dayjs";
@@ -22,15 +22,35 @@ const RoleFrom = () => {
 class Role extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
-    this.state = { role: [], roleLoading: true, activeRole: {} };
+    this.state = {
+      role: [],
+      roleLoading: true,
+      activeLoading: true,
+      activeRole: {},
+    };
   }
 
+  //获取角色列表
   roleList = () => {
     getList().then((res) => {
-      this.setState({ role: res.data, roleLoading: false });
+      this.setState({
+        role: res.data,
+        roleLoading: false,
+        activeLoading: false,
+      });
       if (res.data.length > 0 && !this.state.activeRole.id) {
         this.setState({ activeRole: res.data[0] });
       }
+    });
+  };
+
+  //获取角色详情
+  roleDetail = (id: string) => {
+    if (this.state.activeRole.id === id) return;
+    this.setState({ activeLoading: true });
+    getDetail(id).then((res) => {
+      const result = res.data;
+      this.setState({ activeRole: result, activeLoading: false });
     });
   };
 
@@ -69,6 +89,7 @@ class Role extends React.Component<any, any> {
                   className={classnames("role-item", {
                     active: this.findActive(item.id),
                   })}
+                  onClick={() => this.roleDetail(item.id)}
                 >
                   {item.name}
                 </List.Item>
@@ -87,7 +108,7 @@ class Role extends React.Component<any, any> {
                 </>
               }
               size="small"
-              loading={this.state.roleLoading}
+              loading={this.state.activeLoading}
             >
               <p>
                 角色名称：<span>{this.state.activeRole.name}</span>
