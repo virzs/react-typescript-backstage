@@ -1,5 +1,14 @@
 import request from "@/utils/axios";
 
+interface roleValues {
+  name: string;
+  remark: string;
+}
+
+interface roleUpdateValues extends roleValues {
+  id: string;
+}
+
 //角色分页
 export const getPage = (current: number, size: number) => {
   return request({
@@ -22,6 +31,24 @@ export const getDetail = (id: string) => {
   return request({
     url: "/api/system/role/detail",
     method: "get",
-    params: { roleId: id },
+    params: { id },
+  });
+};
+
+//新增角色
+export const add = (data: roleValues) => {
+  return request({
+    url: "/api/system/role/create",
+    method: "post",
+    data,
+  });
+};
+
+//编辑角色
+export const update = (data: roleUpdateValues) => {
+  return request({
+    url: "/api/system/role/update",
+    method: "put",
+    data,
   });
 };

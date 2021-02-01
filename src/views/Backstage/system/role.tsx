@@ -1,21 +1,72 @@
-import { getDetail, getList } from "@/api/system/role";
-import { Button, Card, Input } from "antd";
+import { add, getDetail, getList, update } from "@/api/system/role";
+import { Button, Card, Input, message, Modal } from "antd";
 import { Form, List } from "antd";
 import dayjs from "dayjs";
-import React from "react";
+import React, { useEffect } from "react";
 import classnames from "classnames";
 import "./styles/role.scss";
 
-const RoleFrom = () => {
+interface roleFormValues {
+  name: string;
+  remark: string;
+}
+
+interface roleFormProps {
+  visible: boolean;
+  readonly type: string;
+  defaultValue?: roleFormValues;
+  onSubmit: (values: roleFormValues) => void;
+  onCancel: () => void;
+}
+
+const RoleForm: React.FC<roleFormProps> = ({
+  visible,
+  type = "add",
+  onCancel,
+  onSubmit,
+  defaultValue,
+}) => {
+  const [form] = Form.useForm();
+  const { TextArea } = Input;
+  useEffect(() => {
+    form.resetFields();
+    if (defaultValue && type === "edit") form.setFieldsValue(defaultValue);
+  });
   return (
-    <Form>
-      <Form.Item label="角色名称" name="name">
-        <Input></Input>
-      </Form.Item>
-      <Form.Item label="角色描述" name="remark">
-        <Input></Input>
-      </Form.Item>
-    </Form>
+    <Modal
+      forceRender
+      visible={visible}
+      title={`${type === "add" ? "新增" : "编辑"}角色`}
+      okText="保存"
+      cancelText="取消"
+      onCancel={onCancel}
+      cancelButtonProps={{ size: "small" }}
+      okButtonProps={{ size: "small" }}
+      onOk={() => {
+        form.validateFields().then((values) => {
+          //将form传递至提交方法，异步操作后清空
+          onSubmit(values);
+        });
+      }}
+    >
+      <Form
+        form={form}
+        size="small"
+        layout="vertical"
+        name="role_form_in_model"
+      >
+        <Form.Item
+          label="角色名称"
+          name="name"
+          rules={[{ required: true, message: "角色名称不能为空" }]}
+        >
+          <Input maxLength={30} />
+        </Form.Item>
+        <Form.Item label="描述" name="remark">
+          <TextArea rows={3} maxLength={100} showCount />
+        </Form.Item>
+      </Form>
+    </Modal>
   );
 };
 
@@ -27,6 +78,8 @@ class Role extends React.Component<any, any> {
       roleLoading: true,
       activeLoading: true,
       activeRole: {},
+      visible: false,
+      type: "add",
     };
   }
 
@@ -46,7 +99,8 @@ class Role extends React.Component<any, any> {
 
   //获取角色详情
   roleDetail = (id: string) => {
-    if (this.state.activeRole.id === id) return;
+    //当左侧点击的角色和当先显示的角色相同及表单不为编辑模式时直接返回
+    if (this.state.activeRole.id === id && this.state.type !== "edit") return;
     this.setState({ activeLoading: true });
     getDetail(id).then((res) => {
       const result = res.data;
@@ -58,6 +112,30 @@ class Role extends React.Component<any, any> {
   findActive = (id: string): boolean => {
     const role = this.state.activeRole;
     return role.id === id ? true : false;
+  };
+
+  modelCancel = () => {
+    this.setState({ visible: false });
+  };
+
+  modelSubmit = (values: roleFormValues) => {
+    const handler = () => {
+      this.modelCancel();
+      this.roleList();
+    };
+    if (this.state.type === "add") {
+      add(values).then((res) => {
+        message.success("添加成功");
+        handler();
+      });
+    } else {
+      const data = { ...this.state.activeRole, ...values };
+      update(data).then((res) => {
+        message.success("编辑成功");
+        this.roleDetail(data.id);
+        handler();
+      });
+    }
   };
 
   componentDidMount() {
@@ -72,7 +150,11 @@ class Role extends React.Component<any, any> {
             title="角色列表"
             size="small"
             extra={
-              <Button type="primary" size="small">
+              <Button
+                type="primary"
+                size="small"
+                onClick={() => this.setState({ visible: true, type: "add" })}
+              >
                 添加
               </Button>
             }
@@ -101,7 +183,14 @@ class Role extends React.Component<any, any> {
               title="角色信息"
               extra={
                 <>
-                  <Button size="small">编辑</Button>
+                  <Button
+                    size="small"
+                    onClick={() =>
+                      this.setState({ visible: true, type: "edit" })
+                    }
+                  >
+                    编辑
+                  </Button>
                   <Button danger size="small">
                     删除
                   </Button>
@@ -127,6 +216,13 @@ class Role extends React.Component<any, any> {
             </Card>
           </div>
         </div>
+        <RoleForm
+          visible={this.state.visible}
+          type={this.state.type}
+          defaultValue={this.state.activeRole}
+          onCancel={this.modelCancel}
+          onSubmit={this.modelSubmit}
+        ></RoleForm>
       </div>
     );
   }
