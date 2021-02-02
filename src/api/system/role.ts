@@ -52,3 +52,12 @@ export const update = (data: roleUpdateValues) => {
     data,
   });
 };
+
+//删除角色
+export const del = (id: string) => {
+  return request({
+    url: "/api/system/role/delete",
+    method: "delete",
+    data: { id },
+  });
+};

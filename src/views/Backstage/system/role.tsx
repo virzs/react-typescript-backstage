@@ -1,4 +1,4 @@
-import { add, getDetail, getList, update } from "@/api/system/role";
+import { add, del, getDetail, getList, update } from "@/api/system/role";
 import { Button, Card, Input, message, Modal } from "antd";
 import { Form, List } from "antd";
 import dayjs from "dayjs";
@@ -18,6 +18,8 @@ interface roleFormProps {
   onSubmit: (values: roleFormValues) => void;
   onCancel: () => void;
 }
+
+const { confirm } = Modal;
 
 const RoleForm: React.FC<roleFormProps> = ({
   visible,
@@ -60,10 +62,15 @@ const RoleForm: React.FC<roleFormProps> = ({
           name="name"
           rules={[{ required: true, message: "角色名称不能为空" }]}
         >
-          <Input maxLength={30} />
+          <Input placeholder="请输入角色名称" maxLength={30} />
         </Form.Item>
         <Form.Item label="描述" name="remark">
-          <TextArea rows={3} maxLength={100} showCount />
+          <TextArea
+            placeholder="请输入角色描述"
+            rows={3}
+            maxLength={100}
+            showCount
+          />
         </Form.Item>
       </Form>
     </Modal>
@@ -114,10 +121,12 @@ class Role extends React.Component<any, any> {
     return role.id === id ? true : false;
   };
 
+  //模态框关闭
   modelCancel = () => {
     this.setState({ visible: false });
   };
 
+  //模态框提交
   modelSubmit = (values: roleFormValues) => {
     const handler = () => {
       this.modelCancel();
@@ -136,6 +145,33 @@ class Role extends React.Component<any, any> {
         handler();
       });
     }
+  };
+
+  //删除角色
+  delRole = () => {
+    confirm({
+      title: "是否删除此角色？",
+      content: "当前角色关联的用户将失去当前角色的所有权限",
+      okButtonProps: { size: "small" },
+      okText: "确认",
+      cancelText: "取消",
+      cancelButtonProps: { size: "small" },
+      onOk: () => {
+        return new Promise((resolve, reject) => {
+          del(this.state.activeRole.id)
+            .then((res) => {
+              this.setState({ activeRole: {} });
+              message.success("删除角色成功");
+              this.roleList();
+              resolve(true);
+            })
+            .catch((err) => {
+              reject(false);
+            });
+        });
+      },
+      onCancel: () => {},
+    });
   };
 
   componentDidMount() {
@@ -191,7 +227,7 @@ class Role extends React.Component<any, any> {
                   >
                     编辑
                   </Button>
-                  <Button danger size="small">
+                  <Button danger size="small" onClick={this.delRole}>
                     删除
                   </Button>
                 </>
