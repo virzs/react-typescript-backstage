@@ -1,16 +1,26 @@
 .system-menu-view {
   height: auto;
-  .handler-box {
-    margin-bottom: 10px;
-    Button {
-      margin: 0 5px;
-    }
+  Button {
+    margin: 0 5px;
   }
   .content-box {
     display: flex;
     .menu-tree {
       width: 200px;
-      box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.1);
+      min-height: 500px;
+      margin-right: 10px;
+      .ant-card-body {
+        padding: 1px 0 0;
+      }
+      .ant-tree-treenode {
+        padding: 8px 0;
+      }
+    }
+    .content-box {
+      width: 100%;
+      .menu-box {
+        width: 100%;
+      }
     }
   }
 }
