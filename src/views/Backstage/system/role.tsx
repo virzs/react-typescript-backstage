@@ -122,14 +122,14 @@ class Role extends React.Component<any, any> {
   };
 
   //模态框关闭
-  modelCancel = () => {
+  modalCancel = () => {
     this.setState({ visible: false });
   };
 
   //模态框提交
-  modelSubmit = (values: roleFormValues) => {
+  modalSubmit = (values: roleFormValues) => {
     const handler = () => {
-      this.modelCancel();
+      this.modalCancel();
       this.roleList();
     };
     if (this.state.type === "add") {
@@ -256,8 +256,8 @@ class Role extends React.Component<any, any> {
           visible={this.state.visible}
           type={this.state.type}
           defaultValue={this.state.activeRole}
-          onCancel={this.modelCancel}
-          onSubmit={this.modelSubmit}
+          onCancel={this.modalCancel}
+          onSubmit={this.modalSubmit}
         ></RoleForm>
       </div>
     );
