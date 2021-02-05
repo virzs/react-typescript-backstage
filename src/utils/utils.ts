@@ -113,3 +113,18 @@ export const deepCopy = (data: any): any => {
   }
   return obj;
 };
+
+//递归处理数据
+//data 数据源 option key&value格式字段替换配置
+export const loop = (data: any[], option: object = {}): any[] => {
+  let keys = Object.keys(option); //获取option keys
+  let values = Object.values(option); //获取option values
+  return data.map((item: any) => {
+    keys.forEach((key: string, index: number) => {
+      item[key] = item[values[index]];
+    });
+    return item.children && item.children.length > 0
+      ? { ...item, children: loop(item.children, option) }
+      : item;
+  });
+};
