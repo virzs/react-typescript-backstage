@@ -15,10 +15,6 @@ interface updateType extends createType {
   readonly id: string;
 }
 
-interface idType {
-  readonly id: string;
-}
-
 //新建菜单
 export const create = (data: createType) => {
   return request({
@@ -38,20 +34,20 @@ export const update = (data: updateType) => {
 };
 
 //删除菜单
-export const del = (data: idType) => {
+export const del = (id: string) => {
   return request({
     url: "/api/system/menu/delete",
     method: "delete",
-    data,
+    data: { id },
   });
 };
 
 //新建菜单
-export const detail = (data: idType) => {
+export const detail = (id: string) => {
   return request({
     url: "/api/system/menu/detail",
     method: "get",
-    data,
+    data: { id },
   });
 };
 

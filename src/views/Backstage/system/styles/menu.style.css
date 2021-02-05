@@ -26,8 +26,14 @@
 
 .system-menu-view .content-box .content-box {
   width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .system-menu-view .content-box .content-box .menu-box {
   width: 100%;
+}
+
+.system-menu-view .content-box .content-box .ant-card {
+  margin-bottom: 10px;
 }

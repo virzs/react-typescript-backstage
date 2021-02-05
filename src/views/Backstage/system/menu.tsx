@@ -1,5 +1,6 @@
-import { treeList } from "@/api/system/menu";
+import { detail, treeList } from "@/api/system/menu";
 import { Button, Card, Tree } from "antd";
+import dayjs from "dayjs";
 import React from "react";
 import "./styles/menu.style.scss";
 
@@ -7,7 +8,7 @@ class Menu extends React.Component<any, any> {
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(props: any) {
     super(props);
-    this.state = { menu: [] };
+    this.state = { menu: [], detail: {} };
   }
 
   //递归处理数据
@@ -20,13 +21,22 @@ class Menu extends React.Component<any, any> {
     });
   };
 
+  //获取树形列表
   getTreeList = () => {
     treeList().then((res) => {
       let menu = this.loop(res.data);
-      console.log(menu);
+      let detail = this.state.detail;
       this.setState({
         menu,
+        detail: Object.keys(detail).length > 0 ? detail : menu[0],
       });
+    });
+  };
+
+  //获取详情
+  getDetail = (id: string) => {
+    detail(id).then((res) => {
+      this.setState({ detail: res.data });
     });
   };
 
@@ -68,7 +78,19 @@ class Menu extends React.Component<any, any> {
                   </Button>
                 </>
               }
-            ></Card>
+            >
+              <p>菜单名称：{this.state.detail.name}</p>
+              <p>菜单别名：{this.state.detail.alias}</p>
+              <p>菜单路径：{this.state.detail.path}</p>
+              <p>菜单备注：{this.state.detail.remark}</p>
+              <p>
+                创建时间：
+                {dayjs(this.state.detail.createTime).format(
+                  "YYYY-MM-DD HH:mm:ss"
+                )}
+              </p>
+            </Card>
+            <Card title="菜单按钮" size="small"></Card>
           </div>
         </div>
       </div>
