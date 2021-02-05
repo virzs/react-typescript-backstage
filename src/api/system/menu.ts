@@ -2,17 +2,16 @@ import request from "@/utils/axios";
 
 interface createType {
   readonly name: string;
-  readonly alias: string;
+  readonly alias?: string;
   readonly path: string;
-  readonly remark: string;
-  readonly code: number;
-  readonly type: number;
+  readonly remark?: string;
+  readonly code: string;
   readonly sort: number;
   readonly hidden: number;
 }
 
 interface updateType extends createType {
-  readonly id: string;
+  readonly id?: string;
 }
 
 //新建菜单
@@ -47,7 +46,7 @@ export const detail = (id: string) => {
   return request({
     url: "/api/system/menu/detail",
     method: "get",
-    data: { id },
+    params: { id },
   });
 };
 

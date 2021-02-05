@@ -1,43 +1,188 @@
-import { detail, treeList } from "@/api/system/menu";
-import { Button, Card, Tree } from "antd";
+import { create, detail, update, treeList } from "@/api/system/menu";
+import { loop } from "@/utils/utils";
+import {
+  Button,
+  Card,
+  Form,
+  Input,
+  InputNumber,
+  message,
+  Modal,
+  Switch,
+  Tree,
+  TreeSelect,
+} from "antd";
 import dayjs from "dayjs";
-import React from "react";
+import React, { useEffect } from "react";
 import "./styles/menu.style.scss";
 
+interface menuFormValues {
+  id?: string;
+  name: string;
+  alias?: string;
+  path: string;
+  remark?: string;
+  code: string;
+  hidden: number;
+  sort: number;
+  parentId: string;
+}
+
+interface menuFormProps {
+  visible: boolean;
+  onSubmit: (values: menuFormValues) => void;
+  onCancel: () => void;
+  type?: string;
+  defaultValue?: menuFormValues;
+  treeData: menuFormValues[];
+}
+
+const MenuForm: React.FC<menuFormProps> = ({
+  visible,
+  onSubmit,
+  onCancel,
+  type = "add",
+  defaultValue,
+  treeData,
+}) => {
+  const [form] = Form.useForm();
+  const { TextArea } = Input;
+  useEffect(() => {
+    form.resetFields();
+    if (defaultValue && type === "edit") form.setFieldsValue(defaultValue);
+  });
+  return (
+    <Modal
+      forceRender
+      visible={visible}
+      title={`${type === "add" ? "新增" : "删除"}菜单`}
+      okText="保存"
+      cancelText="取消"
+      cancelButtonProps={{ size: "small" }}
+      okButtonProps={{ size: "small" }}
+      onCancel={onCancel}
+      onOk={() => {
+        form.validateFields().then((values) => {
+          onSubmit(values);
+        });
+      }}
+    >
+      <Form form={form} size="small" name="menu_form_in_modal">
+        <Form.Item label="上级菜单" name="parentId">
+          <TreeSelect
+            placeholder="请选择上级菜单"
+            treeData={loop(treeData, { title: "name", value: "id" })}
+            allowClear
+          ></TreeSelect>
+        </Form.Item>
+        <Form.Item
+          label="菜单名称"
+          name="name"
+          rules={[{ required: true, message: "菜单名称不能为空" }]}
+        >
+          <Input placeholder="请输入菜单名称" />
+        </Form.Item>
+        <Form.Item label="菜单别名" name="alias">
+          <Input placeholder="请输入菜单别名" />
+        </Form.Item>
+        <Form.Item
+          label="菜单路径"
+          name="path"
+          rules={[{ required: true, message: "菜单路径不能为空" }]}
+        >
+          <Input placeholder="请输入菜单路径" />
+        </Form.Item>
+        <Form.Item
+          label="菜单编号"
+          name="code"
+          rules={[{ required: true, message: "菜单编号不能为空" }]}
+        >
+          <Input placeholder="请输入菜单编号" />
+        </Form.Item>
+        <Form.Item
+          label="菜单排序"
+          name="sort"
+          rules={[{ required: true, message: "菜单排序不能为空" }]}
+        >
+          <InputNumber min={0} />
+        </Form.Item>
+        <Form.Item label="是否隐藏" name="hidden" valuePropName="checked">
+          <Switch />
+        </Form.Item>
+        <Form.Item label="菜单描述" name="remark">
+          <TextArea
+            placeholder="请输入菜单描述"
+            role="3"
+            maxLength={100}
+            showCount
+          />
+        </Form.Item>
+      </Form>
+    </Modal>
+  );
+};
+
 class Menu extends React.Component<any, any> {
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(props: any) {
     super(props);
-    this.state = { menu: [], detail: {} };
+    this.state = {
+      menu: [],
+      detail: {},
+      type: "add",
+      visible: false,
+      treeLoading: true,
+      detailLoading: true,
+    };
   }
-
-  //递归处理数据
-  loop = (arr: Array<object>): any => {
-    return arr.map((item: any) => {
-      item.key = item.id;
-      return item.children && item.children.length > 0
-        ? { ...item, children: this.loop(item.children) }
-        : item;
-    });
-  };
 
   //获取树形列表
   getTreeList = () => {
     treeList().then((res) => {
-      let menu = this.loop(res.data);
+      let menu = loop(res.data, { key: "id" });
       let detail = this.state.detail;
+      menu[0].hidden = menu[0].hidden === 0 ? false : true;
       this.setState({
         menu,
         detail: Object.keys(detail).length > 0 ? detail : menu[0],
+        treeLoading: false,
+        detailLoading: false,
       });
     });
   };
 
   //获取详情
   getDetail = (id: string) => {
+    this.setState({ detailLoading: true });
     detail(id).then((res) => {
-      this.setState({ detail: res.data });
+      res.data.hidden = res.data.hidden === 0 ? false : true;
+      this.setState({ detail: res.data, detailLoading: false });
     });
+  };
+
+  modalCancel = () => {
+    this.setState({ visible: false });
+  };
+
+  modalSubmit = (values: menuFormValues) => {
+    const handler = () => {
+      this.modalCancel();
+      this.getTreeList();
+    };
+    if (this.state.type === "add") {
+      values.hidden = values.hidden ? 1 : 0;
+      create(values).then(() => {
+        message.success("添加成功");
+        handler();
+      });
+    } else {
+      const data = { ...this.state.detail, ...values };
+      data.hidden = data.hidden ? 1 : 0;
+      update(data).then(() => {
+        message.success("修改成功");
+        this.getDetail(data.id);
+        handler();
+      });
+    }
   };
 
   componentDidMount() {
@@ -49,11 +194,16 @@ class Menu extends React.Component<any, any> {
       <div className="system-menu-view">
         <div className="content-box">
           <Card
+            loading={this.state.treeLoading}
             className="menu-tree"
             title="菜单列表"
             size="small"
             extra={
-              <Button size="small" type="primary">
+              <Button
+                size="small"
+                type="primary"
+                onClick={() => this.setState({ visible: true, type: "add" })}
+              >
                 添加
               </Button>
             }
@@ -67,12 +217,20 @@ class Menu extends React.Component<any, any> {
           </Card>
           <div className="content-box">
             <Card
+              loading={this.state.detailLoading}
               className="menu-box"
               title="菜单信息"
               size="small"
               extra={
                 <>
-                  <Button size="small">编辑</Button>
+                  <Button
+                    size="small"
+                    onClick={() =>
+                      this.setState({ type: "edit", visible: true })
+                    }
+                  >
+                    编辑
+                  </Button>
                   <Button size="small" danger>
                     删除
                   </Button>
@@ -83,6 +241,7 @@ class Menu extends React.Component<any, any> {
               <p>菜单别名：{this.state.detail.alias}</p>
               <p>菜单路径：{this.state.detail.path}</p>
               <p>菜单备注：{this.state.detail.remark}</p>
+              <p>是否隐藏：{this.state.detail.hidden ? "是" : "否"}</p>
               <p>
                 创建时间：
                 {dayjs(this.state.detail.createTime).format(
@@ -93,6 +252,14 @@ class Menu extends React.Component<any, any> {
             <Card title="菜单按钮" size="small"></Card>
           </div>
         </div>
+        <MenuForm
+          visible={this.state.visible}
+          type={this.state.type}
+          defaultValue={this.state.detail}
+          treeData={this.state.menu}
+          onCancel={this.modalCancel}
+          onSubmit={this.modalSubmit}
+        ></MenuForm>
       </div>
     );
   }
