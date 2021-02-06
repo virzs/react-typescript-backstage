@@ -9,6 +9,7 @@ class VMemu extends React.Component<any, any> {
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(props: any) {
     super(props);
+    this.state = { collapsed: true };
   }
   componentDidMount() {}
   handleRenderMenuItem(routes: any, parentPath: string | null = null) {
@@ -31,7 +32,7 @@ class VMemu extends React.Component<any, any> {
   }
   render() {
     return (
-      <Menu mode="inline">
+      <Menu mode="inline" theme="dark" inlineCollapsed={this.state.collapsed}>
         {this.handleRenderMenuItem(backstageRouterTree, "/backstage")}
       </Menu>
     );

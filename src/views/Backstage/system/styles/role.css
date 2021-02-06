@@ -12,6 +12,7 @@
 
 .system-role-view .content-box .role-list {
   margin-right: 10px;
+  min-height: 500px;
 }
 
 .system-role-view .content-box .role-list .list {

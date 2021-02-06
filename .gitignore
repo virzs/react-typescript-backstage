@@ -16,6 +16,9 @@
 .env.local
 .env
 
+#listory
+/.history
+
 # log
 debug.log
 npm-debug.log*
