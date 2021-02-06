@@ -185,6 +185,11 @@ class Menu extends React.Component<any, any> {
     }
   };
 
+  treeSelect = (keys: any, e: any) => {
+    const key = keys[0];
+    this.getDetail(key);
+  };
+
   componentDidMount() {
     this.getTreeList();
   }
@@ -209,10 +214,12 @@ class Menu extends React.Component<any, any> {
             }
           >
             <Tree
+              showLine
               titleRender={(nodeData: any) => {
                 return `${nodeData.name}`;
               }}
               treeData={this.state.menu}
+              onSelect={this.treeSelect}
             ></Tree>
           </Card>
           <div className="content-box">
