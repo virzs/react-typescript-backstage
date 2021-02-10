@@ -27,6 +27,11 @@
   animation: 5s textScroll linear infinite normal;
 }
 
+.icon-select-modal .icon-box .icon-item.active {
+  background: #1890ff;
+  color: #fff;
+}
+
 .icon-select-modal .icon-box .icon-item .scroll-box {
   max-width: 100px;
   overflow: hidden;

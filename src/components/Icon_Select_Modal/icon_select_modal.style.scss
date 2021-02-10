@@ -22,6 +22,10 @@
           animation: 5s textScroll linear infinite normal;
         }
       }
+      &.active {
+        background: #1890ff;
+        color: #fff;
+      }
       .scroll-box {
         max-width: 100px;
         overflow: hidden;

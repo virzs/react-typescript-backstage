@@ -1,7 +1,8 @@
 import { Modal, Tabs } from "antd";
-import React from "react";
+import React, { useState } from "react";
 import * as Icon from "@ant-design/icons";
 import "./icon_select_modal.style.scss";
+import classNames from "classnames";
 
 //线框 方向性 图标
 const OutlinedDirectionIcon: string[] = [
@@ -158,7 +159,8 @@ const tabPane: { name: string; value: string[] }[] = [
 
 interface modalProps {
   visible: boolean;
-  onOk: () => void;
+  defaultValue?: string;
+  onOk: (value: string) => void;
   onCancel: () => void;
 }
 
@@ -166,16 +168,26 @@ const { TabPane } = Tabs;
 
 export const IconSelectModal: React.FC<modalProps> = ({
   visible,
+  defaultValue,
   onOk,
   onCancel,
 }) => {
+  const [selectedItem, setSelected] = useState("");
+  const onSelected = (item: string) => {
+    setSelected(selectedItem === item ? "" : item);
+  };
+  if (defaultValue) {
+    setSelected(defaultValue);
+  }
   return (
     <Modal
       width="870px"
       className="icon-select-modal"
       title="图标库"
       visible={visible}
-      onOk={onOk}
+      onOk={() => {
+        onOk(selectedItem);
+      }}
       onCancel={onCancel}
       okText="确定"
       okButtonProps={{ size: "small" }}
@@ -197,7 +209,15 @@ export const IconSelectModal: React.FC<modalProps> = ({
               <div className="icon-box">
                 {item.value.map((item: string) => {
                   return (
-                    <div className="icon-item" key={item}>
+                    <div
+                      className={classNames("icon-item", {
+                        active: item === selectedItem,
+                      })}
+                      key={item}
+                      onClick={() => {
+                        onSelected(item);
+                      }}
+                    >
                       {React.createElement(Icon[item], {
                         key: item,
                         style: { fontSize: "24px" },
