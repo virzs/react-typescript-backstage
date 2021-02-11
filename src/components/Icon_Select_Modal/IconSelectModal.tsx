@@ -274,10 +274,15 @@ export class IconSelect extends React.Component<
 
   selectedChange = (changeValue: string) => {
     if (this.props.onChange) {
-      console.log(changeValue);
       this.props.onChange(changeValue);
     }
   };
+
+  componentDidMount() {
+    if (this.props.value) {
+      this.setState({ selected: this.props.value });
+    }
+  }
 
   render() {
     let render: ReactNode = <></>;
