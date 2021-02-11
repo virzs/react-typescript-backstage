@@ -1,8 +1,9 @@
 import { Modal, Tabs } from "antd";
-import React, { useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import * as Icon from "@ant-design/icons";
 import "./icon_select_modal.style.scss";
 import classNames from "classnames";
+import { PlusOutlined } from "@ant-design/icons";
 
 //线框 方向性 图标
 const OutlinedDirectionIcon: string[] = [
@@ -166,6 +167,7 @@ interface modalProps {
 
 const { TabPane } = Tabs;
 
+//图标选择弹框组件
 export const IconSelectModal: React.FC<modalProps> = ({
   visible,
   defaultValue,
@@ -176,19 +178,19 @@ export const IconSelectModal: React.FC<modalProps> = ({
   const onSelected = (item: string) => {
     setSelected(selectedItem === item ? "" : item);
   };
-  if (defaultValue) {
-    setSelected(defaultValue);
-  }
+  useEffect(() => {
+    if (defaultValue) {
+      setSelected(defaultValue);
+    }
+  }, [defaultValue]);
   return (
     <Modal
       width="870px"
       className="icon-select-modal"
       title="图标库"
       visible={visible}
-      onOk={() => {
-        onOk(selectedItem);
-      }}
-      onCancel={onCancel}
+      onOk={() => onOk(selectedItem)}
+      onCancel={() => onCancel()}
       okText="确定"
       okButtonProps={{ size: "small" }}
       cancelText="取消"
@@ -238,3 +240,67 @@ export const IconSelectModal: React.FC<modalProps> = ({
     </Modal>
   );
 };
+
+interface IconSelectPropTypes {
+  onChange?: (value: string) => void;
+  value?: string;
+}
+
+interface IconSelectStateTypes {
+  visible: boolean;
+  selected: string;
+}
+
+//图标选择弹框组件封装显示效果
+export class IconSelect extends React.Component<
+  IconSelectPropTypes,
+  IconSelectStateTypes
+> {
+  constructor(props: IconSelectPropTypes) {
+    super(props);
+    this.state = { visible: false, selected: "" };
+  }
+
+  onSelect = () => {};
+
+  onOk = (value: string) => {
+    this.setState({ visible: false, selected: value });
+    this.selectedChange(value);
+  };
+
+  onCancel = () => {
+    this.setState({ visible: false });
+  };
+
+  selectedChange = (changeValue: string) => {
+    if (this.props.onChange) {
+      console.log(changeValue);
+      this.props.onChange(changeValue);
+    }
+  };
+
+  render() {
+    let render: ReactNode = <></>;
+    if (this.state.selected) {
+      render = React.createElement(Icon[this.state.selected]);
+    } else {
+      render = <PlusOutlined />;
+    }
+    return (
+      <>
+        <div
+          className="icon-select"
+          onClick={() => this.setState({ visible: true })}
+        >
+          {render}
+        </div>
+        <IconSelectModal
+          visible={this.state.visible}
+          defaultValue={this.state.selected}
+          onOk={this.onOk}
+          onCancel={this.onCancel}
+        ></IconSelectModal>
+      </>
+    );
+  }
+}
