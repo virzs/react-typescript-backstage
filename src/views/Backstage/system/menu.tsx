@@ -1,4 +1,5 @@
-import { create, detail, update, treeList } from "@/api/system/menu";
+import { create, detail, update, treeList, del } from "@/api/system/menu";
+import { IconSelect } from "@/components/Icon_Select_Modal/IconSelectModal";
 import { loop } from "@/utils/utils";
 import {
   Button,
@@ -20,6 +21,7 @@ interface menuFormValues {
   id?: string;
   name: string;
   alias?: string;
+  icon?: string;
   path: string;
   remark?: string;
   code: string;
@@ -36,6 +38,8 @@ interface menuFormProps {
   defaultValue?: menuFormValues;
   treeData: menuFormValues[];
 }
+
+const { confirm } = Modal;
 
 const MenuForm: React.FC<menuFormProps> = ({
   visible,
@@ -55,7 +59,7 @@ const MenuForm: React.FC<menuFormProps> = ({
     <Modal
       forceRender
       visible={visible}
-      title={`${type === "add" ? "新增" : "删除"}菜单`}
+      title={`${type === "add" ? "新增" : "编辑"}菜单`}
       okText="保存"
       cancelText="取消"
       cancelButtonProps={{ size: "small" }}
@@ -84,6 +88,9 @@ const MenuForm: React.FC<menuFormProps> = ({
         </Form.Item>
         <Form.Item label="菜单别名" name="alias">
           <Input placeholder="请输入菜单别名" />
+        </Form.Item>
+        <Form.Item label="菜单图标" name="icon">
+          <IconSelect></IconSelect>
         </Form.Item>
         <Form.Item
           label="菜单路径"
@@ -122,8 +129,8 @@ const MenuForm: React.FC<menuFormProps> = ({
   );
 };
 
-class Menu extends React.Component<any, any> {
-  constructor(props: any) {
+class Menu extends React.Component<null, any> {
+  constructor(props: null) {
     super(props);
     this.state = {
       menu: [],
@@ -132,6 +139,7 @@ class Menu extends React.Component<any, any> {
       visible: false,
       treeLoading: true,
       detailLoading: true,
+      iconVisible: false,
     };
   }
 
@@ -159,10 +167,12 @@ class Menu extends React.Component<any, any> {
     });
   };
 
+  //表单取消
   modalCancel = () => {
     this.setState({ visible: false });
   };
 
+  //表单提交
   modalSubmit = (values: menuFormValues) => {
     const handler = () => {
       this.modalCancel();
@@ -185,9 +195,36 @@ class Menu extends React.Component<any, any> {
     }
   };
 
-  treeSelect = (keys: any, e: any) => {
+  //选择菜单
+  treeSelect = (keys: any) => {
     const key = keys[0];
     this.getDetail(key);
+  };
+
+  //删除菜单
+  delMenu = () => {
+    confirm({
+      title: "是否删除此菜单？",
+      content: "当前菜单下存在子菜单是无法删除",
+      okButtonProps: { size: "small" },
+      cancelButtonProps: { size: "small" },
+      okText: "确认",
+      cancelText: "取消",
+      onOk: () => {
+        return new Promise((resolve, reject) => {
+          del(this.state.detail.id)
+            .then((res) => {
+              message.success("删除成功");
+              this.setState({ detail: {} });
+              this.getTreeList();
+              resolve(true);
+            })
+            .catch((err) => {
+              reject(false);
+            });
+        });
+      },
+    });
   };
 
   componentDidMount() {
@@ -219,6 +256,7 @@ class Menu extends React.Component<any, any> {
                 return `${nodeData.name}`;
               }}
               treeData={this.state.menu}
+              defaultSelectedKeys={[this.state.detail.id]}
               onSelect={this.treeSelect}
             ></Tree>
           </Card>
@@ -238,7 +276,7 @@ class Menu extends React.Component<any, any> {
                   >
                     编辑
                   </Button>
-                  <Button size="small" danger>
+                  <Button size="small" danger onClick={this.delMenu}>
                     删除
                   </Button>
                 </>
