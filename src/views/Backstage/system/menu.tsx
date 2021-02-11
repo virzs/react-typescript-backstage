@@ -1,4 +1,5 @@
 import { create, detail, update, treeList, del } from "@/api/system/menu";
+import { IconSelect } from "@/components/Icon_Select_Modal/IconSelectModal";
 import { loop } from "@/utils/utils";
 import {
   Button,
@@ -20,6 +21,7 @@ interface menuFormValues {
   id?: string;
   name: string;
   alias?: string;
+  icon?: string;
   path: string;
   remark?: string;
   code: string;
@@ -57,7 +59,7 @@ const MenuForm: React.FC<menuFormProps> = ({
     <Modal
       forceRender
       visible={visible}
-      title={`${type === "add" ? "新增" : "删除"}菜单`}
+      title={`${type === "add" ? "新增" : "编辑"}菜单`}
       okText="保存"
       cancelText="取消"
       cancelButtonProps={{ size: "small" }}
@@ -86,6 +88,9 @@ const MenuForm: React.FC<menuFormProps> = ({
         </Form.Item>
         <Form.Item label="菜单别名" name="alias">
           <Input placeholder="请输入菜单别名" />
+        </Form.Item>
+        <Form.Item label="菜单图标" name="icon">
+          <IconSelect></IconSelect>
         </Form.Item>
         <Form.Item
           label="菜单路径"
@@ -124,8 +129,8 @@ const MenuForm: React.FC<menuFormProps> = ({
   );
 };
 
-class Menu extends React.Component<any, any> {
-  constructor(props: any) {
+class Menu extends React.Component<null, any> {
+  constructor(props: null) {
     super(props);
     this.state = {
       menu: [],
@@ -134,6 +139,7 @@ class Menu extends React.Component<any, any> {
       visible: false,
       treeLoading: true,
       detailLoading: true,
+      iconVisible: false,
     };
   }
 
