@@ -1,0 +1,13 @@
+.v-menu {
+  .toggle-menu {
+    height: 40px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    transition: 0.3s;
+    &:hover {
+      background-color: #dcdcdc;
+    }
+  }
+}
