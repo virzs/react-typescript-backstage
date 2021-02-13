@@ -1,13 +1,66 @@
+@mixin menu-item-style {
+  height: 40px;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  margin: 0;
+}
+
 .v-menu {
   .toggle-menu {
-    height: 40px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    padding: 12px 20px;
     transition: 0.3s;
+    font-size: 14px;
+    @include menu-item-style();
     &:hover {
       background-color: #dcdcdc;
+    }
+    &.toggle-menu-collapsed {
+      font-size: 16px;
+      padding: 0 calc(50% - 16px / 2);
+    }
+  }
+  .v-menu-style {
+    li {
+      margin: 0;
+      .ant-menu-submenu-title {
+        display: flex;
+        align-items: center;
+        height: 40px;
+        line-height: normal;
+        margin: 0;
+      }
+      a::before {
+        top: 50%;
+        left: 0;
+        width: 6px;
+        height: 24px;
+        position: absolute;
+        transform: scale3d(0, 0, 0);
+        margin-top: -12px;
+        transition: all 250ms cubic-bezier(0.7, 0.1, 0.33, 1) 0ms;
+        background-color: #0078d4;
+      }
+      &.ant-menu-item-selected {
+        background: none;
+        a::before {
+          transform: scale3d(1, 1, 1);
+        }
+        &::after {
+          opacity: 0;
+        }
+      }
+      .ant-menu-submenu-title:hover,
+      .ant-menu-item-only-child:hover {
+        background-color: #dcdcdc;
+        color: rgba(0, 0, 0, 0.85);
+      }
+    }
+    &.ant-menu-inline-collapsed {
+      width: 44px;
+      li {
+        padding: 0 calc(50% - 16px / 2);
+      }
     }
   }
 }
