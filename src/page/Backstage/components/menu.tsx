@@ -1,5 +1,6 @@
 import { backstageRouterTree } from "@/data/backstage.router";
 import { deepCopy } from "@/utils/utils";
+import * as Icon from "@ant-design/icons";
 import { MenuOutlined } from "@ant-design/icons";
 import { Menu } from "antd";
 import SubMenu from "antd/lib/menu/SubMenu";
@@ -14,28 +15,27 @@ interface VMenuPropTypes {
 }
 
 class VMemu extends React.Component<VMenuPropTypes, any> {
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
-  constructor(props: VMenuPropTypes) {
-    super(props);
-  }
   toggle = () => {
     this.props.toggle();
   };
   componentDidMount() {}
-  handleRenderMenuItem(routes: any, parentPath: string | null = null) {
+  handleRenderMenuItem(routes: any) {
     let routesList = deepCopy(routes);
     return routesList.map((i: any) => {
-      i.path = parentPath ? `${parentPath}${i.path}` : i.path;
+      let icon = React.createElement(Icon[i.icon || "MenuOutlined"], {
+        key: i.path,
+      });
+      let path = `/backstage${i.path}`;
       if (i.children) {
         return (
-          <SubMenu title={i.name} key={i.path} icon={<MenuOutlined />}>
-            {this.handleRenderMenuItem(i.children, i.path)}
+          <SubMenu title={i.name} key={path} icon={icon}>
+            {this.handleRenderMenuItem(i.children)}
           </SubMenu>
         );
       }
       return (
-        <Menu.Item key={i.path}>
-          <Link to={`${i.path}`}>{i.name}</Link>
+        <Menu.Item key={path} icon={icon}>
+          <Link to={`${path}`}>{i.name}</Link>
         </Menu.Item>
       );
     });
@@ -52,7 +52,7 @@ class VMemu extends React.Component<VMenuPropTypes, any> {
           <MenuOutlined />
         </div>
         <Menu className="v-menu-style" mode="inline">
-          {this.handleRenderMenuItem(backstageRouterTree, "/backstage")}
+          {this.handleRenderMenuItem(backstageRouterTree)}
         </Menu>
       </div>
     );

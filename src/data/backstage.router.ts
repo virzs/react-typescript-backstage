@@ -1,6 +1,6 @@
 import { routerType } from "./../interface/router.interface.d";
 import { FormatRouterList } from "@/utils/router";
-import loadable from "@loadable/component";
+import React from "react";
 
 const backstageRouterTree: Array<routerType> = [
   {
@@ -11,7 +11,7 @@ const backstageRouterTree: Array<routerType> = [
     children: [
       {
         name: "编辑器",
-        path: "/editor",
+        path: "/index/editor",
         meta: {},
       },
     ],
@@ -24,7 +24,7 @@ const backstageRouterTree: Array<routerType> = [
     children: [
       {
         name: "文章分类",
-        path: "/list",
+        path: "/classify/list",
         meta: {},
       },
     ],
@@ -37,7 +37,7 @@ const backstageRouterTree: Array<routerType> = [
     children: [
       {
         name: "角色管理",
-        path: "role",
+        path: "/authority/role",
         meta: {},
       },
     ],
@@ -50,22 +50,22 @@ const backstageRouterTree: Array<routerType> = [
     children: [
       {
         name: "角色管理",
-        path: "/role",
+        path: "/system/role",
         meta: {},
       },
       {
         name: "系统字典",
-        path: "/dict",
+        path: "/system/dict",
         meta: {},
       },
       {
         name: "业务字典",
-        path: "/dictbiz",
+        path: "/system/dictbiz",
         meta: {},
       },
       {
         name: "系统菜单",
-        path: "/menu",
+        path: "/system/menu",
         meta: {},
       },
     ],
@@ -73,14 +73,14 @@ const backstageRouterTree: Array<routerType> = [
 ];
 
 const BackstageRouter = FormatRouterList(backstageRouterTree).map(
-  (item: routerType, index: number) => {
-    let file;
+  (item: routerType) => {
     try {
-      file = loadable(() => import(`@/views/Backstage${item.path}`));
+      item.component = React.lazy(
+        () => import(`@/views/Backstage${item.path}`)
+      );
     } catch (err) {
       console.log(new Error(err));
     }
-    item.component = file;
     return item;
   }
 );
