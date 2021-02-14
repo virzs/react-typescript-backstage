@@ -28,7 +28,7 @@ class VMemu extends React.Component<VMenuPropTypes, any> {
       let path = `/backstage${i.path}`;
       if (i.children) {
         return (
-          <SubMenu title={i.name} key={path} icon={icon}>
+          <SubMenu popupClassName="v-menu-popup-sub" title={i.name} key={path} icon={icon}>
             {this.handleRenderMenuItem(i.children)}
           </SubMenu>
         );

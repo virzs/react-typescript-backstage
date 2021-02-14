@@ -64,3 +64,18 @@
     }
   }
 }
+
+.v-menu-popup-sub {
+  .ant-menu-vertical {
+    li {
+      margin: 0;
+      &:hover {
+        background-color: #dcdcdc;
+        color: rgba(0, 0, 0, 0.85);
+        a {
+          color: inherit;
+        }
+      }
+    }
+  }
+}
