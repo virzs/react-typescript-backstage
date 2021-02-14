@@ -1,0 +1,12 @@
+.global-loading {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 48px;
+  flex-direction: column;
+  p {
+    margin-top: 20px;
+    font-size: 16px;
+  }
+}

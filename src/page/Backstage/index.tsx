@@ -8,8 +8,11 @@ const { Header, Sider, Content } = Layout;
 class Backstage extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
-    this.state = {};
+    this.state = { collapsed: true };
   }
+  toggle = () => {
+    this.setState({ collapsed: !this.state.collapsed });
+  };
   componentDidMount() {}
   render() {
     return (
@@ -20,8 +23,17 @@ class Backstage extends React.Component<any, any> {
         </Header>
         <Layout>
           {/* 侧边栏 */}
-          <Sider>
-            <VMemu></VMemu>
+          <Sider
+            theme="light"
+            collapsedWidth={44}
+            trigger={null}
+            collapsible
+            collapsed={this.state.collapsed}
+          >
+            <VMemu
+              toggle={() => this.toggle()}
+              collapsed={this.state.collapsed}
+            ></VMemu>
           </Sider>
           {/* 内容 */}
           <Content className="backstage-content">

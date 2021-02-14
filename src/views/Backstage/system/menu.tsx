@@ -4,6 +4,7 @@ import { loop } from "@/utils/utils";
 import {
   Button,
   Card,
+  Empty,
   Form,
   Input,
   InputNumber,
@@ -148,7 +149,9 @@ class Menu extends React.Component<null, any> {
     treeList().then((res) => {
       let menu = loop(res.data, { key: "id" });
       let detail = this.state.detail;
-      menu[0].hidden = menu[0].hidden === 0 ? false : true;
+      if (menu[0]) {
+        menu[0].hidden = menu[0].hidden === 0 ? false : true;
+      }
       this.setState({
         menu,
         detail: Object.keys(detail).length > 0 ? detail : menu[0],
@@ -250,15 +253,21 @@ class Menu extends React.Component<null, any> {
               </Button>
             }
           >
-            <Tree
-              showLine
-              titleRender={(nodeData: any) => {
-                return `${nodeData.name}`;
-              }}
-              treeData={this.state.menu}
-              defaultSelectedKeys={[this.state.detail.id]}
-              onSelect={this.treeSelect}
-            ></Tree>
+            {this.state.menu.length > 0 ? (
+              <Tree
+                showLine
+                titleRender={(nodeData: any) => {
+                  return `${nodeData.name}`;
+                }}
+                treeData={this.state.menu}
+                defaultSelectedKeys={[
+                  this.state.detail ? this.state.detail.id : "",
+                ]}
+                onSelect={this.treeSelect}
+              ></Tree>
+            ) : (
+              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+            )}
           </Card>
           <div className="content-box">
             <Card
@@ -282,17 +291,23 @@ class Menu extends React.Component<null, any> {
                 </>
               }
             >
-              <p>菜单名称：{this.state.detail.name}</p>
-              <p>菜单别名：{this.state.detail.alias}</p>
-              <p>菜单路径：{this.state.detail.path}</p>
-              <p>菜单备注：{this.state.detail.remark}</p>
-              <p>是否隐藏：{this.state.detail.hidden ? "是" : "否"}</p>
-              <p>
-                创建时间：
-                {dayjs(this.state.detail.createTime).format(
-                  "YYYY-MM-DD HH:mm:ss"
-                )}
-              </p>
+              {this.state.detail ? (
+                <>
+                  <p>菜单名称：{this.state.detail.name}</p>
+                  <p>菜单别名：{this.state.detail.alias}</p>
+                  <p>菜单路径：{this.state.detail.path}</p>
+                  <p>菜单备注：{this.state.detail.remark}</p>
+                  <p>是否隐藏：{this.state.detail.hidden ? "是" : "否"}</p>
+                  <p>
+                    创建时间：
+                    {dayjs(this.state.detail.createTime).format(
+                      "YYYY-MM-DD HH:mm:ss"
+                    )}
+                  </p>
+                </>
+              ) : (
+                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+              )}
             </Card>
             <Card title="菜单按钮" size="small"></Card>
           </div>

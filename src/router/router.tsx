@@ -1,7 +1,7 @@
 import Index from "@/page/Index";
 import About from "@/page/About";
 import Login from "@/page/Auth/login";
-import React from "react";
+import React, { Suspense } from "react";
 import { Route } from "react-router";
 import { Switch, withRouter } from "react-router-dom";
 import Backstage from "@/page/Backstage";
@@ -12,6 +12,7 @@ import { message } from "antd";
 import { FormatRouterList } from "@/utils/router";
 import BackstageRouter from "@/data/backstage.router";
 import { deepCopy } from "@/utils/utils";
+import { GlobalLoading } from "@/components/Global_Loading/GlobalLoading";
 
 export interface routerType {
   readonly name: string;
@@ -57,10 +58,15 @@ const pageRoutes: Array<routerType> = [
 
 // 处理路由数据
 function Recursive(route: any[], basePath: string = "") {
-  let list: any = FormatRouterList(route, basePath);
+  let list: any = FormatRouterList(route);
   return list.map((i: { path: any; component: any }) => {
     return (
-      <Route path={i.path} component={i.component} key={i.path} exact></Route>
+      <Route
+        path={`${basePath}${i.path}`}
+        component={i.component}
+        key={i.path}
+        exact
+      ></Route>
     );
   });
 }
@@ -97,16 +103,18 @@ class VRouter extends React.Component<any, any> {
   }
   render() {
     return (
-      <Switch>
-        {Recursive(pageRoutes)}
-        {/* 管理后台部分路由 */}
-        <Backstage>
-          <Switch>{Recursive(BackstageRouter, "/backstage")}</Switch>
-          <Switch>{BackstageRouter.toString()}</Switch>
-        </Backstage>
-        {/* 错误页面 */}
-        <Route component={Error}></Route>
-      </Switch>
+      <Suspense fallback={<GlobalLoading />}>
+        <Switch>
+          {Recursive(pageRoutes)}
+          {/* 管理后台部分路由 */}
+          <Backstage>
+            <Switch>{Recursive(BackstageRouter, "/backstage")}</Switch>
+            <Switch>{BackstageRouter.toString()}</Switch>
+          </Backstage>
+          {/* 错误页面 */}
+          <Route component={Error}></Route>
+        </Switch>
+      </Suspense>
     );
   }
 }
