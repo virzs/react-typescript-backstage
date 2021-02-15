@@ -13,6 +13,7 @@ import { FormatRouterList } from "@/utils/router";
 import BackstageRouter from "@/data/backstage.router";
 import { deepCopy } from "@/utils/utils";
 import { GlobalLoading } from "@/components/Global_Loading/GlobalLoading";
+import { ErrorBoundary } from "@/components/Error_Boundaries/ErrorBoundaries";
 
 export interface routerType {
   readonly name: string;
@@ -77,7 +78,6 @@ class VRouter extends React.Component<any, any> {
     super(props);
   }
   componentDidMount() {
-    console.log("触发刷新", this.props);
     this.RouterGuard(this.props);
   }
   componentWillUnmount() {}
@@ -99,21 +99,20 @@ class VRouter extends React.Component<any, any> {
       message.error("请先登录");
       history.push("/auth/login");
     }
-    console.log("guard", isAuth, isLogin);
   }
   render() {
     return (
       <Suspense fallback={<GlobalLoading />}>
-        <Switch>
-          {Recursive(pageRoutes)}
-          {/* 管理后台部分路由 */}
-          <Backstage>
-            <Switch>{Recursive(BackstageRouter, "/backstage")}</Switch>
-            <Switch>{BackstageRouter.toString()}</Switch>
-          </Backstage>
-          {/* 错误页面 */}
-          <Route component={Error}></Route>
-        </Switch>
+        <ErrorBoundary>
+          <Switch>
+            {Recursive(pageRoutes)}
+            {/* 管理后台部分路由 */}
+            <Backstage>
+              <Switch>{Recursive(BackstageRouter, "/backstage")}</Switch>
+              <Switch>{BackstageRouter.toString()}</Switch>
+            </Backstage>
+          </Switch>
+        </ErrorBoundary>
       </Suspense>
     );
   }
