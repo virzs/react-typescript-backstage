@@ -154,7 +154,7 @@ class Menu extends React.Component<null, any> {
       }
       this.setState({
         menu,
-        detail: Object.keys(detail).length > 0 ? detail : menu[0],
+        detail: detail ? detail : menu[0],
         treeLoading: false,
         detailLoading: false,
       });
