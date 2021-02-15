@@ -1,5 +1,6 @@
+import { treeList } from "@/api/system/menu";
 import { backstageRouterTree } from "@/data/backstage.router";
-import { deepCopy } from "@/utils/utils";
+import { deepCopy, getUuid } from "@/utils/utils";
 import * as Icon from "@ant-design/icons";
 import { MenuOutlined } from "@ant-design/icons";
 import { Menu } from "antd";
@@ -15,10 +16,21 @@ interface VMenuPropTypes {
 }
 
 class VMemu extends React.Component<VMenuPropTypes, any> {
+  constructor(props: VMenuPropTypes) {
+    super(props);
+    this.state = { menu: backstageRouterTree };
+  }
   toggle = () => {
     this.props.toggle();
   };
-  componentDidMount() {}
+  componentDidMount() {
+    this.getMenu();
+  }
+  getMenu = () => {
+    treeList().then((res) => {
+      this.setState({ menu: [...this.state.menu, ...res.data] });
+    });
+  };
   handleRenderMenuItem(routes: any) {
     let routesList = deepCopy(routes);
     return routesList.map((i: any) => {
@@ -26,15 +38,20 @@ class VMemu extends React.Component<VMenuPropTypes, any> {
         key: i.path,
       });
       let path = `/backstage${i.path}`;
-      if (i.children) {
+      if (i.children && i.children.length > 0) {
         return (
-          <SubMenu popupClassName="v-menu-popup-sub" title={i.name} key={path} icon={icon}>
+          <SubMenu
+            popupClassName="v-menu-popup-sub"
+            title={i.name}
+            key={i.id || getUuid()}
+            icon={icon}
+          >
             {this.handleRenderMenuItem(i.children)}
           </SubMenu>
         );
       }
       return (
-        <Menu.Item key={path} icon={icon}>
+        <Menu.Item key={i.id || getUuid()} icon={icon}>
           <Link to={`${path}`}>{i.name}</Link>
         </Menu.Item>
       );
@@ -52,7 +69,7 @@ class VMemu extends React.Component<VMenuPropTypes, any> {
           <MenuOutlined />
         </div>
         <Menu className="v-menu-style" mode="inline">
-          {this.handleRenderMenuItem(backstageRouterTree)}
+          {this.handleRenderMenuItem(this.state.menu)}
         </Menu>
       </div>
     );
