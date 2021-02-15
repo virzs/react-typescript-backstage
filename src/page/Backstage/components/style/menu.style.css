@@ -68,6 +68,14 @@
   padding: 0 calc(50% - 16px / 2);
 }
 
+.v-menu .v-menu-style.ant-menu-inline-collapsed li .ant-menu-submenu-title:hover {
+  background: none;
+}
+
+.v-menu .v-menu-style.ant-menu-inline-collapsed li.ant-menu-submenu-open:hover {
+  background-color: #dcdcdc;
+}
+
 .v-menu-popup-sub .ant-menu-vertical li {
   margin: 0;
 }
