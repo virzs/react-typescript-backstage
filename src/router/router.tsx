@@ -14,6 +14,7 @@ import BackstageRouter from "@/data/backstage.router";
 import { deepCopy } from "@/utils/utils";
 import { GlobalLoading } from "@/components/Global_Loading/GlobalLoading";
 import { ErrorBoundary } from "@/components/Error_Boundaries/ErrorBoundaries";
+import { LocalLoading } from "@/components/Local_Loading/LocalLoading";
 
 export interface routerType {
   readonly name: string;
@@ -108,8 +109,9 @@ class VRouter extends React.Component<any, any> {
             {Recursive(pageRoutes)}
             {/* 管理后台部分路由 */}
             <Backstage>
-              <Switch>{Recursive(BackstageRouter, "/backstage")}</Switch>
-              <Switch>{BackstageRouter.toString()}</Switch>
+              <Suspense fallback={<LocalLoading />}>
+                <Switch>{Recursive(BackstageRouter, "/backstage")}</Switch>
+              </Suspense>
             </Backstage>
           </Switch>
         </ErrorBoundary>
