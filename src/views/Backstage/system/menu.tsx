@@ -148,11 +148,11 @@ class Menu extends React.Component<null, any> {
   //获取树形列表
   getTreeList = () => {
     treeList().then((res) => {
+      //多次递归处理数据性能较差，loop函数为通用方法
       let menu = loop(res.data, { key: "id" });
       const setIcon = (list: any[]): any[] => {
         return list.map((item: any) => {
           item.icon = React.createElement(Icon[item.icon]);
-          console.log(item.icon);
           return item.children && item.children.length > 0
             ? { ...item, children: setIcon(item.children) }
             : item;
