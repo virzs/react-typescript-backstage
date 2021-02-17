@@ -24,7 +24,6 @@ class Login extends React.Component<any, any> {
     };
   }
   submitLogin = () => {
-    console.log("props", this.props);
     loginApi(this.state.loginForm).then((res: any) => {
       message.success(res.msg);
       const action = UserLogin(res.data);

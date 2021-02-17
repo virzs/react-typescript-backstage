@@ -74,33 +74,48 @@ function Recursive(route: any[], basePath: string = "") {
 }
 
 class VRouter extends React.Component<any, any> {
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(props: any) {
     super(props);
+    this.state = {
+      isLogin: false,
+      prevRouter: {},
+      nextRouter: {},
+    };
   }
   componentDidMount() {
-    this.RouterGuard(this.props);
+    this.RouterGuard();
   }
   componentWillUnmount() {}
-  UNSAFE_componentWillReceiveProps(nextProps: { location: { pathname: any } }) {
-    // 判断跳转路由不等于当前路由
-    if (nextProps.location.pathname !== this.props.location.pathname) {
-      this.RouterGuard(nextProps);
-    }
+  //获取跳转后的router
+  componentWillReceiveProps(next: object) {
+    this.setState({ nextRouter: next });
   }
-  RouterGuard(nextProps: any) {
-    const { history, location } = nextProps;
-    const storage = new LocalStorage();
-    const isLogin = storage.get("user_info"); //根据刷新token判断是否已登录
-    const backstageRouter = deepCopy(BackstageRouter);
-    const isAuth = backstageRouter.find(
-      (i: { path: any }) => i.path === location.pathname
-    );
-    if (isAuth && !isLogin) {
-      message.error("请先登录");
-      history.push("/auth/login");
-    }
+  //获取跳转前的router
+  componentDidUpdate(prev: any) {
+    this.setState({ prevRouter: prev });
+    this.RouterGuard();
   }
+  //TODO 登录后获取菜单储存到session
+  //TODO 后台路由跳转前比对session中信息，不存在则跳转404，存在则直接跳转
+  //TODO 接口根据登录用户角色返回拥有权限的菜单
+  RouterGuard() {
+    const { nextRouter, prevRouter } = this.state;
+    // const { history, location } = nextRouter;
+    console.log(nextRouter, prevRouter);
+    // if (nextRouter.location.pathname === prevRouter.location.pathname) return;
+    // const storage = new LocalStorage();
+    // const isLogin = storage.get("user_info"); //根据刷新token判断是否已登录
+    // const backstageRouter = deepCopy(BackstageRouter);
+    // const isAuth = backstageRouter.find(
+    //   (i: { path: any }) => i.path === location.pathname
+    // );
+    // this.setState({ isLogin: !isLogin });
+    // if (isAuth && !isLogin) {
+    //   message.error("请先登录");
+    //   history.push("/auth/login");
+    // }
+  }
+
   render() {
     return (
       <Suspense fallback={<GlobalLoading />}>
