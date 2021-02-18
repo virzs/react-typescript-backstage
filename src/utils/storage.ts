@@ -40,7 +40,7 @@ class storage {
       case "[object Object]":
         return Object.entries(obj.value);
       case "[object Array]":
-        return JSON.parse(obj.value);
+        return obj.value;
       case "[object Date]":
         return new Date(obj.value);
       default:

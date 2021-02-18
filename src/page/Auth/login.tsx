@@ -28,10 +28,9 @@ class Login extends React.Component<any, any> {
   submitLogin = () => {
     loginApi(this.state.loginForm).then((res: any) => {
       message.success(res.msg);
-      this.getMenu();
       const action = UserLogin(res.data);
       this.props.sendAction(action);
-      this.props.history.goBack();
+      this.getMenu();
     });
   };
   changeLogin = (data: object, all: object) => {
@@ -41,6 +40,7 @@ class Login extends React.Component<any, any> {
   getMenu = () => {
     treeList().then((res) => {
       SessionStorage.set("menu", res.data);
+      this.props.history.goBack();
     });
   };
   render() {
