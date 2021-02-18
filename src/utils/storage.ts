@@ -1,16 +1,16 @@
 /**
  * 封装storage数据转换操作，get数据转换待验证
  */
-
-export class LocalStorage {
-  localstorage: Storage;
-  constructor() {
-    this.localstorage = window.localStorage;
+class storage {
+  storage: any;
+  constructor(name: string) {
+    this.storage =
+      name === "local" ? window.localStorage : window.sessionStorage;
   }
   set(name: string, value: any) {
     if (!value) throw new Error("value is not empty");
     const type = Object.prototype.toString.call(value);
-    this.localstorage.setItem(
+    this.storage.setItem(
       name,
       JSON.stringify({
         type,
@@ -19,7 +19,7 @@ export class LocalStorage {
     );
   }
   get(name: string) {
-    const value: any = this.localstorage.getItem(name);
+    const value: any = this.storage.getItem(name);
     if (!value) return;
     const obj = JSON.parse(value);
     switch (obj.type) {
@@ -40,7 +40,7 @@ export class LocalStorage {
       case "[object Object]":
         return Object.entries(obj.value);
       case "[object Array]":
-        return JSON.parse(obj.value);
+        return obj.value;
       case "[object Date]":
         return new Date(obj.value);
       default:
@@ -48,9 +48,12 @@ export class LocalStorage {
     }
   }
   remove(name: string) {
-    this.localstorage.removeItem(name);
+    this.storage.removeItem(name);
   }
   clear() {
-    this.localstorage.clear();
+    this.storage.clear();
   }
 }
+
+export const LocalStorage = new storage("local");
+export const SessionStorage = new storage("session");

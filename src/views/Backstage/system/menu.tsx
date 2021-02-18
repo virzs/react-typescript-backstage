@@ -1,6 +1,7 @@
 import { create, detail, update, treeList, del } from "@/api/system/menu";
 import { IconSelect } from "@/components/Icon_Select_Modal/IconSelectModal";
 import { loop } from "@/utils/utils";
+import * as Icon from "@ant-design/icons";
 import {
   Button,
   Card,
@@ -147,14 +148,24 @@ class Menu extends React.Component<null, any> {
   //获取树形列表
   getTreeList = () => {
     treeList().then((res) => {
+      //多次递归处理数据性能较差，loop函数为通用方法
       let menu = loop(res.data, { key: "id" });
+      const setIcon = (list: any[]): any[] => {
+        return list.map((item: any) => {
+          item.icon = React.createElement(Icon[item.icon]);
+          return item.children && item.children.length > 0
+            ? { ...item, children: setIcon(item.children) }
+            : item;
+        });
+      };
+      menu = setIcon(menu);
       let detail = this.state.detail;
       if (menu[0]) {
         menu[0].hidden = menu[0].hidden === 0 ? false : true;
       }
       this.setState({
         menu,
-        detail: Object.keys(detail).length > 0 ? detail : menu[0],
+        detail: detail ? detail : menu[0],
         treeLoading: false,
         detailLoading: false,
       });
@@ -255,6 +266,7 @@ class Menu extends React.Component<null, any> {
           >
             {this.state.menu.length > 0 ? (
               <Tree
+                showIcon
                 showLine
                 titleRender={(nodeData: any) => {
                   return `${nodeData.name}`;

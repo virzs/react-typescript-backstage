@@ -6,6 +6,8 @@ import "./style/login.style.scss";
 import { login as loginApi } from "@/api/auth/auth";
 import { UserLogin } from "@/store/actions/user.action";
 import { connect } from "react-redux";
+import { treeList } from "@/api/system/menu";
+import { SessionStorage } from "@/utils/storage";
 
 export interface result {
   code: number;
@@ -24,16 +26,22 @@ class Login extends React.Component<any, any> {
     };
   }
   submitLogin = () => {
-    console.log("props", this.props);
     loginApi(this.state.loginForm).then((res: any) => {
       message.success(res.msg);
       const action = UserLogin(res.data);
       this.props.sendAction(action);
-      this.props.history.goBack();
+      this.getMenu();
     });
   };
   changeLogin = (data: object, all: object) => {
     this.setState({ loginForm: all });
+  };
+  //登陆后获取后台的菜单存储到session中
+  getMenu = () => {
+    treeList().then((res) => {
+      SessionStorage.set("menu", res.data);
+      this.props.history.goBack();
+    });
   };
   render() {
     return (

@@ -7,12 +7,12 @@ import { Switch, withRouter } from "react-router-dom";
 import Backstage from "@/page/Backstage";
 import Stage from "@/page/Backstage";
 import Error from "@/page/Error";
-import { LocalStorage } from "@/utils/storage";
+import { SessionStorage } from "@/utils/storage";
 import { message } from "antd";
 import { FormatRouterList } from "@/utils/router";
-import BackstageRouter from "@/data/backstage.router";
-import { deepCopy } from "@/utils/utils";
 import { GlobalLoading } from "@/components/Global_Loading/GlobalLoading";
+import { ErrorBoundary } from "@/components/Error_Boundaries/ErrorBoundaries";
+import { LocalLoading } from "@/components/Local_Loading/LocalLoading";
 
 export interface routerType {
   readonly name: string;
@@ -72,48 +72,99 @@ function Recursive(route: any[], basePath: string = "") {
 }
 
 class VRouter extends React.Component<any, any> {
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(props: any) {
     super(props);
+    this.state = {
+      isLogin: false,
+      prevRouter: {},
+      nextRouter: {},
+      currentRouter: null,
+    };
   }
   componentDidMount() {
-    console.log("触发刷新", this.props);
-    this.RouterGuard(this.props);
+    this.RouterGuard();
   }
   componentWillUnmount() {}
-  UNSAFE_componentWillReceiveProps(nextProps: { location: { pathname: any } }) {
-    // 判断跳转路由不等于当前路由
-    if (nextProps.location.pathname !== this.props.location.pathname) {
-      this.RouterGuard(nextProps);
-    }
+  componentDidUpdate() {
+    this.RouterGuard();
   }
-  RouterGuard(nextProps: any) {
-    const { history, location } = nextProps;
-    const storage = new LocalStorage();
-    const isLogin = storage.get("user_info"); //根据刷新token判断是否已登录
-    const backstageRouter = deepCopy(BackstageRouter);
-    const isAuth = backstageRouter.find(
-      (i: { path: any }) => i.path === location.pathname
-    );
-    if (isAuth && !isLogin) {
-      message.error("请先登录");
-      history.push("/auth/login");
+  //TODO 登录后获取菜单储存到session
+  //TODO 后台路由跳转前比对session中信息，不存在则跳转404，存在则直接跳转
+  //TODO 接口根据登录用户角色返回拥有权限的菜单
+  RouterGuard() {
+    const menu = SessionStorage.get("menu");
+    const findLocation = () => {
+      const menuList = FormatRouterList(menu);
+      return menuList.find(
+        (item: any) => window.location.pathname === `/backstage${item.path}`
+      );
+    };
+    //session中存在菜单时
+    if (menu) {
+      let currentRouter = findLocation();
+      if (currentRouter) {
+        //currentRouter存在并与当前router id相同时返回
+        if (
+          this.state.currentRouter &&
+          this.state.currentRouter.id === currentRouter.id
+        )
+          return;
+        this.setState({
+          currentRouter: {
+            ...currentRouter,
+            component: React.lazy(
+              () => import(`@/views/Backstage${currentRouter.path}`)
+            ),
+          },
+        });
+      } else if (!currentRouter && this.state.currentRouter !== null) {
+        this.setState({ currentRouter: null });
+        message.error("页面不存在！！！");
+        const { history } = this.props;
+        history.push("/backstage/error/404");
+      }
     }
-    console.log("guard", isAuth, isLogin);
+    // const { history, location } = nextRouter;
+    // if (nextRouter.location.pathname === prevRouter.location.pathname) return;
+    // const storage = new LocalStorage();
+    // const isLogin = storage.get("user_info"); //根据刷新token判断是否已登录
+    // const backstageRouter = deepCopy(BackstageRouter);
+    // const isAuth = backstageRouter.find(
+    //   (i: { path: any }) => i.path === location.pathname
+    // );
+    // this.setState({ isLogin: !isLogin });
+    // if (isAuth && !isLogin) {
+    //   message.error("请先登录");
+    //   history.push("/auth/login");
+    // }
   }
+
   render() {
     return (
       <Suspense fallback={<GlobalLoading />}>
-        <Switch>
-          {Recursive(pageRoutes)}
-          {/* 管理后台部分路由 */}
-          <Backstage>
-            <Switch>{Recursive(BackstageRouter, "/backstage")}</Switch>
-            <Switch>{BackstageRouter.toString()}</Switch>
-          </Backstage>
-          {/* 错误页面 */}
-          <Route component={Error}></Route>
-        </Switch>
+        <ErrorBoundary>
+          <Switch>
+            {Recursive(pageRoutes)}
+            {/* 管理后台部分路由 */}
+            <Backstage>
+              <Suspense fallback={<LocalLoading />}>
+                <Switch>
+                  {this.state.currentRouter !== null ? (
+                    <Route
+                      path={`/backstage${this.state.currentRouter.path}`}
+                      component={this.state.currentRouter.component}
+                    ></Route>
+                  ) : (
+                    <Route
+                      path="/backstage/error/404"
+                      component={React.lazy(() => import("@/page/Error"))}
+                    ></Route>
+                  )}
+                </Switch>
+              </Suspense>
+            </Backstage>
+          </Switch>
+        </ErrorBoundary>
       </Suspense>
     );
   }
