@@ -1,8 +1,6 @@
 import { LocalStorage } from "@/utils/storage";
 import request from "@/utils/axios";
 
-const storage = new LocalStorage();
-
 //用户登录
 export const login = (data: object) => {
   return request({
@@ -26,7 +24,7 @@ export const refresh = () => {
     url: "/api/auth/refresh",
     method: "get",
     headers: {
-      refresh_token: storage.get("refresh_token"),
+      refresh_token: LocalStorage.get("refresh_token"),
     },
   });
 };

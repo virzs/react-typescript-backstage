@@ -40,8 +40,7 @@ class Login extends React.Component<any, any> {
   //登陆后获取后台的菜单存储到session中
   getMenu = () => {
     treeList().then((res) => {
-      const session = new SessionStorage();
-      session.set("menu", res.data);
+      SessionStorage.set("menu", res.data);
     });
   };
   render() {

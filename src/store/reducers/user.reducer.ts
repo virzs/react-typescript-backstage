@@ -10,10 +10,9 @@ export const userReducer = (
     case USER_LOGIN:
       console.log(action, state);
       const { accessToken, refreshToken, ...userInfo } = action.info;
-      const localstorage = new LocalStorage();
-      localstorage.set("access_token", accessToken);
-      localstorage.set("refresh_token", refreshToken);
-      localstorage.set("user_info", userInfo);
+      LocalStorage.set("access_token", accessToken);
+      LocalStorage.set("refresh_token", refreshToken);
+      LocalStorage.set("user_info", userInfo);
       return Object.assign({}, state, action);
     default:
       return state;
