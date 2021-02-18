@@ -11,8 +11,6 @@ export interface requestOptionsType {
   params?: object;
 }
 
-const storage = new LocalStorage();
-
 let isRefreshToken = false; //是否处于需要刷新状态
 let requests: Array<any> = []; // 存储待重发请求的数组(同时发起多个请求的处理)
 
@@ -27,7 +25,7 @@ axios.defaults.validateStatus = (status: number) => {
 //在请求或响应被 then 或 catch 处理前拦截。
 axios.interceptors.request.use(
   (config) => {
-    const access_token = storage.get("access_token");
+    const access_token = LocalStorage.get("access_token");
     //本地存储中存在token且没有携带token
     if (access_token) {
       config.headers["access_token"] = access_token;
@@ -56,8 +54,7 @@ axios.interceptors.response.use(
         return refresh()
           .then((res) => {
             const { access_token } = res.data;
-            const storage = new LocalStorage();
-            storage.set("access_token", access_token);
+            LocalStorage.set("access_token", access_token);
             requests.forEach((cb: any) => cb(access_token));
             requests = []; // 重新请求完清空
             config.headers["access_token"] = access_token;
