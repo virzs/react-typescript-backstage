@@ -7,11 +7,9 @@ import { Switch, withRouter } from "react-router-dom";
 import Backstage from "@/page/Backstage";
 import Stage from "@/page/Backstage";
 import Error from "@/page/Error";
-import { LocalStorage } from "@/utils/storage";
+import { SessionStorage } from "@/utils/storage";
 import { message } from "antd";
 import { FormatRouterList } from "@/utils/router";
-import BackstageRouter from "@/data/backstage.router";
-import { deepCopy } from "@/utils/utils";
 import { GlobalLoading } from "@/components/Global_Loading/GlobalLoading";
 import { ErrorBoundary } from "@/components/Error_Boundaries/ErrorBoundaries";
 import { LocalLoading } from "@/components/Local_Loading/LocalLoading";
@@ -80,28 +78,53 @@ class VRouter extends React.Component<any, any> {
       isLogin: false,
       prevRouter: {},
       nextRouter: {},
+      currentRouter: null,
     };
   }
   componentDidMount() {
     this.RouterGuard();
   }
   componentWillUnmount() {}
-  //获取跳转后的router
-  componentWillReceiveProps(next: object) {
-    this.setState({ nextRouter: next });
-  }
-  //获取跳转前的router
-  componentDidUpdate(prev: any) {
-    this.setState({ prevRouter: prev });
+  componentDidUpdate() {
     this.RouterGuard();
   }
   //TODO 登录后获取菜单储存到session
   //TODO 后台路由跳转前比对session中信息，不存在则跳转404，存在则直接跳转
   //TODO 接口根据登录用户角色返回拥有权限的菜单
   RouterGuard() {
-    const { nextRouter, prevRouter } = this.state;
+    const menu = SessionStorage.get("menu");
+    const findLocation = () => {
+      const menuList = FormatRouterList(menu);
+      return menuList.find(
+        (item: any) => window.location.pathname === `/backstage${item.path}`
+      );
+    };
+    //session中存在菜单时
+    if (menu) {
+      let currentRouter = findLocation();
+      if (currentRouter) {
+        //currentRouter存在并与当前router id相同时返回
+        if (
+          this.state.currentRouter &&
+          this.state.currentRouter.id === currentRouter.id
+        )
+          return;
+        this.setState({
+          currentRouter: {
+            ...currentRouter,
+            component: React.lazy(
+              () => import(`@/views/Backstage${currentRouter.path}`)
+            ),
+          },
+        });
+      } else if (!currentRouter && this.state.currentRouter !== null) {
+        this.setState({ currentRouter: null });
+        message.error("页面不存在！！！");
+        const { history } = this.props;
+        history.push("/backstage/error/404");
+      }
+    }
     // const { history, location } = nextRouter;
-    console.log(nextRouter, prevRouter);
     // if (nextRouter.location.pathname === prevRouter.location.pathname) return;
     // const storage = new LocalStorage();
     // const isLogin = storage.get("user_info"); //根据刷新token判断是否已登录
@@ -125,7 +148,19 @@ class VRouter extends React.Component<any, any> {
             {/* 管理后台部分路由 */}
             <Backstage>
               <Suspense fallback={<LocalLoading />}>
-                <Switch>{Recursive(BackstageRouter, "/backstage")}</Switch>
+                <Switch>
+                  {this.state.currentRouter !== null ? (
+                    <Route
+                      path={`/backstage${this.state.currentRouter.path}`}
+                      component={this.state.currentRouter.component}
+                    ></Route>
+                  ) : (
+                    <Route
+                      path="/backstage/error/404"
+                      component={React.lazy(() => import("@/page/Error"))}
+                    ></Route>
+                  )}
+                </Switch>
               </Suspense>
             </Backstage>
           </Switch>
