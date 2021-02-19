@@ -8,7 +8,7 @@ import Backstage from "@/page/Backstage";
 import Stage from "@/page/Backstage";
 import Error from "@/page/Error";
 import { SessionStorage } from "@/utils/storage";
-import { message } from "antd";
+import { Button, message, Result } from "antd";
 import { FormatRouterList } from "@/utils/router";
 import { GlobalLoading } from "@/components/Global_Loading/GlobalLoading";
 import { ErrorBoundary } from "@/components/Error_Boundaries/ErrorBoundaries";
@@ -88,8 +88,8 @@ class VRouter extends React.Component<any, any> {
   componentDidUpdate() {
     this.RouterGuard();
   }
-  //TODO 登录后获取菜单储存到session
-  //TODO 后台路由跳转前比对session中信息，不存在则跳转404，存在则直接跳转
+  //TODO 登录后获取菜单储存到session ✓
+  //TODO 后台路由跳转前比对session中信息，不存在则跳转404，存在则直接跳转 ✓
   //TODO 接口根据登录用户角色返回拥有权限的菜单
   RouterGuard() {
     const menu = SessionStorage.get("menu");
@@ -153,11 +153,27 @@ class VRouter extends React.Component<any, any> {
                     <Route
                       path={`/backstage${this.state.currentRouter.path}`}
                       component={this.state.currentRouter.component}
+                      exact
                     ></Route>
                   ) : (
                     <Route
                       path="/backstage/error/404"
-                      component={React.lazy(() => import("@/page/Error"))}
+                      component={() => (
+                        <Result
+                          status="404"
+                          title="404"
+                          subTitle="页面不存在"
+                          extra={
+                            <Button
+                              type="primary"
+                              onClick={() => window.history.go(-1)}
+                            >
+                              返回上一页
+                            </Button>
+                          }
+                        />
+                      )}
+                      exact
                     ></Route>
                   )}
                 </Switch>
