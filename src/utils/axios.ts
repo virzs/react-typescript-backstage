@@ -61,9 +61,10 @@ axios.interceptors.response.use(
             return axios(config);
           })
           .catch((err) => {
-            console.log(window.location);
-            window.location.href = "/auth/login";
-            message.error("登陆状态已失效，请重新登录");
+            if (window.location.pathname !== "/auth/login") {
+              window.location.href = "/auth/login";
+              message.error("登陆状态已失效，请重新登录");
+            }
             return Promise.reject(err);
           })
           .finally(() => {
