@@ -55,6 +55,8 @@ axios.interceptors.response.use(
           .then((res) => {
             const { access_token } = res.data;
             LocalStorage.set("access_token", access_token);
+            //TODO 请求队列部分代码
+            //TODO 用户头像组件，修改资料功能，注销功能
             requests.forEach((cb: any) => cb(access_token));
             requests = []; // 重新请求完清空
             config.headers["access_token"] = access_token;
