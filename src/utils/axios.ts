@@ -14,16 +14,14 @@ export interface requestOptionsType {
 let isRefreshToken = false; //是否处于需要刷新状态
 let requests: Array<any> = []; // 存储待重发请求的数组(同时发起多个请求的处理)
 
-//默认超时时间
-axios.defaults.timeout = 10000;
-
-//默认返回状态码
-axios.defaults.validateStatus = (status: number) => {
-  return status >= 200 && status <= 500;
-};
+//axios默认配置
+const instance = axios.create({
+  timeout: 10000,
+  validateStatus: (status: number) => status >= 200 && status <= 500,
+});
 
 //在请求或响应被 then 或 catch 处理前拦截。
-axios.interceptors.request.use(
+instance.interceptors.request.use(
   (config) => {
     const access_token = LocalStorage.get("access_token");
     //本地存储中存在token且没有携带token
@@ -38,7 +36,7 @@ axios.interceptors.request.use(
 );
 
 //响应拦截器，处理请求后的数据
-axios.interceptors.response.use(
+instance.interceptors.response.use(
   (res) => {
     const status: number = Number(res.data.code || res.status);
     const msg: string = res.data.msg || "未知错误";
@@ -55,12 +53,10 @@ axios.interceptors.response.use(
           .then((res) => {
             const { access_token } = res.data;
             LocalStorage.set("access_token", access_token);
-            //TODO 请求队列部分代码
-            //TODO 用户头像组件，修改资料功能，注销功能
             requests.forEach((cb: any) => cb(access_token));
             requests = []; // 重新请求完清空
             config.headers["access_token"] = access_token;
-            return axios(config);
+            return instance(config);
           })
           .catch((err) => {
             if (window.location.pathname !== "/auth/login") {
@@ -78,7 +74,7 @@ axios.interceptors.response.use(
           // 用函数形式将 resolve 存入，等待刷新后再执行
           requests.push((token: any) => {
             config.headers["access_token"] = token;
-            resolve(axios(config));
+            resolve(instance(config));
           });
         });
       }
@@ -90,9 +86,8 @@ axios.interceptors.response.use(
     return res.data;
   },
   (error) => {
-    console.log(error);
     return Promise.reject(error);
   }
 );
 
-export default axios;
+export default instance;
