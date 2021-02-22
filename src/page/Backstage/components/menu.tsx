@@ -1,5 +1,6 @@
-import { treeList } from "@/api/system/menu";
 import { backstageRouterTree } from "@/data/backstage.router";
+import { FormatRouterList } from "@/utils/router";
+import { SessionStorage } from "@/utils/storage";
 import { deepCopy, getUuid } from "@/utils/utils";
 import * as Icon from "@ant-design/icons";
 import { MenuOutlined } from "@ant-design/icons";
@@ -27,9 +28,15 @@ class VMemu extends React.Component<VMenuPropTypes, any> {
     this.getMenu();
   }
   getMenu = () => {
-    treeList().then((res) => {
-      this.setState({ menu: [...this.state.menu, ...res.data] });
-    });
+    const menu = SessionStorage.get("menu");
+    this.setState({ menu: menu ? menu : backstageRouterTree });
+  };
+  //查找当前路由对应的菜单
+  findMenuSelected = (): string[] => {
+    const selected = FormatRouterList(this.state.menu).find(
+      (item: any) => window.location.pathname === `/backstage${item.path}`
+    );
+    return selected ? [selected.id] : [];
   };
   handleRenderMenuItem(routes: any) {
     let routesList = deepCopy(routes);
@@ -43,7 +50,7 @@ class VMemu extends React.Component<VMenuPropTypes, any> {
           <SubMenu
             popupClassName="v-menu-popup-sub"
             title={i.name}
-            key={i.id || getUuid()}
+            key={i.id ? i.id : getUuid()}
             icon={icon}
           >
             {this.handleRenderMenuItem(i.children)}
@@ -51,7 +58,7 @@ class VMemu extends React.Component<VMenuPropTypes, any> {
         );
       }
       return (
-        <Menu.Item key={i.id || getUuid()} icon={icon}>
+        <Menu.Item key={i.id ? i.id : getUuid()} icon={icon}>
           <Link to={`${path}`}>{i.name}</Link>
         </Menu.Item>
       );
@@ -68,7 +75,11 @@ class VMemu extends React.Component<VMenuPropTypes, any> {
         >
           <MenuOutlined />
         </div>
-        <Menu className="v-menu-style" mode="inline">
+        <Menu
+          className="v-menu-style"
+          mode="inline"
+          selectedKeys={this.findMenuSelected()}
+        >
           {this.handleRenderMenuItem(this.state.menu)}
         </Menu>
       </div>

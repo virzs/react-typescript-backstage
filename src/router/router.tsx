@@ -12,6 +12,7 @@ import { FormatRouterList } from "@/utils/router";
 import { GlobalLoading } from "@/components/Global_Loading/GlobalLoading";
 import { ErrorBoundary } from "@/components/Error_Boundaries/ErrorBoundaries";
 import { LocalLoading } from "@/components/Local_Loading/LocalLoading";
+import { backstageRouterTree } from "@/data/backstage.router";
 
 export interface routerType {
   readonly name: string;
@@ -90,7 +91,7 @@ class VRouter extends React.Component<any, any> {
     const menu = SessionStorage.get("menu");
     const isLogin = LocalStorage.get("user_info") ? true : false;
     const { history } = this.props;
-    const findLocation = () => {
+    const findLocation = (menu: any[]) => {
       const menuList = FormatRouterList(menu);
       return menuList.find(
         (item: any) => window.location.pathname === `/backstage${item.path}`
@@ -102,7 +103,9 @@ class VRouter extends React.Component<any, any> {
       isLogin &&
       window.location.pathname.indexOf("backstage") !== -1
     ) {
-      let currentRouter = findLocation();
+      //接口返回菜单为空时使用默认菜单
+      let menuRouter = menu.length === 0 ? backstageRouterTree : menu;
+      let currentRouter = findLocation(menuRouter);
       if (currentRouter) {
         //currentRouter存在并与当前router id相同时返回
         if (
