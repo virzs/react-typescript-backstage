@@ -2,13 +2,12 @@ import Index from "@/page/Index";
 import About from "@/page/About";
 import Login from "@/page/Auth/login";
 import React, { Suspense } from "react";
-import { Route } from "react-router";
+import { Redirect, Route } from "react-router";
 import { Switch, withRouter } from "react-router-dom";
 import Backstage from "@/page/Backstage";
-import Stage from "@/page/Backstage";
 import Error from "@/page/Error";
-import { SessionStorage } from "@/utils/storage";
-import { message } from "antd";
+import { LocalStorage, SessionStorage } from "@/utils/storage";
+import { Button, message, Result } from "antd";
 import { FormatRouterList } from "@/utils/router";
 import { GlobalLoading } from "@/components/Global_Loading/GlobalLoading";
 import { ErrorBoundary } from "@/components/Error_Boundaries/ErrorBoundaries";
@@ -17,6 +16,7 @@ import { LocalLoading } from "@/components/Local_Loading/LocalLoading";
 export interface routerType {
   readonly name: string;
   readonly path: string;
+  readonly exact?: boolean;
   readonly component?: any;
   readonly meta?: object;
   readonly auth?: boolean;
@@ -27,30 +27,28 @@ const pageRoutes: Array<routerType> = [
   {
     name: "首页",
     path: "/",
+    exact: true,
     component: Index,
     children: [],
   },
   {
     name: "关于",
     path: "/about",
+    exact: true,
     component: About,
     meta: {},
   },
   {
     name: "登录",
     path: "/auth/login",
+    exact: true,
     component: Login,
-    meta: {},
-  },
-  {
-    name: "后台",
-    path: "/backstage",
-    component: Stage,
     meta: {},
   },
   {
     name: "404",
     path: "/error/404",
+    exact: true,
     component: Error,
     meta: {},
   },
@@ -59,13 +57,13 @@ const pageRoutes: Array<routerType> = [
 // 处理路由数据
 function Recursive(route: any[], basePath: string = "") {
   let list: any = FormatRouterList(route);
-  return list.map((i: { path: any; component: any }) => {
+  return list.map((i: routerType) => {
     return (
       <Route
         path={`${basePath}${i.path}`}
         component={i.component}
         key={i.path}
-        exact
+        exact={i.exact || true}
       ></Route>
     );
   });
@@ -88,19 +86,22 @@ class VRouter extends React.Component<any, any> {
   componentDidUpdate() {
     this.RouterGuard();
   }
-  //TODO 登录后获取菜单储存到session
-  //TODO 后台路由跳转前比对session中信息，不存在则跳转404，存在则直接跳转
-  //TODO 接口根据登录用户角色返回拥有权限的菜单
   RouterGuard() {
     const menu = SessionStorage.get("menu");
+    const isLogin = LocalStorage.get("user_info") ? true : false;
+    const { history } = this.props;
     const findLocation = () => {
       const menuList = FormatRouterList(menu);
       return menuList.find(
         (item: any) => window.location.pathname === `/backstage${item.path}`
       );
     };
-    //session中存在菜单时
-    if (menu) {
+    //session中存在菜单及登陆时
+    if (
+      menu &&
+      isLogin &&
+      window.location.pathname.indexOf("backstage") !== -1
+    ) {
       let currentRouter = findLocation();
       if (currentRouter) {
         //currentRouter存在并与当前router id相同时返回
@@ -120,23 +121,9 @@ class VRouter extends React.Component<any, any> {
       } else if (!currentRouter && this.state.currentRouter !== null) {
         this.setState({ currentRouter: null });
         message.error("页面不存在！！！");
-        const { history } = this.props;
         history.push("/backstage/error/404");
       }
     }
-    // const { history, location } = nextRouter;
-    // if (nextRouter.location.pathname === prevRouter.location.pathname) return;
-    // const storage = new LocalStorage();
-    // const isLogin = storage.get("user_info"); //根据刷新token判断是否已登录
-    // const backstageRouter = deepCopy(BackstageRouter);
-    // const isAuth = backstageRouter.find(
-    //   (i: { path: any }) => i.path === location.pathname
-    // );
-    // this.setState({ isLogin: !isLogin });
-    // if (isAuth && !isLogin) {
-    //   message.error("请先登录");
-    //   history.push("/auth/login");
-    // }
   }
 
   render() {
@@ -146,23 +133,40 @@ class VRouter extends React.Component<any, any> {
           <Switch>
             {Recursive(pageRoutes)}
             {/* 管理后台部分路由 */}
-            <Backstage>
-              <Suspense fallback={<LocalLoading />}>
-                <Switch>
+            <Route path="/backstage">
+              <Backstage>
+                <Suspense fallback={<LocalLoading />}>
                   {this.state.currentRouter !== null ? (
                     <Route
                       path={`/backstage${this.state.currentRouter.path}`}
                       component={this.state.currentRouter.component}
+                      exact
                     ></Route>
                   ) : (
                     <Route
                       path="/backstage/error/404"
-                      component={React.lazy(() => import("@/page/Error"))}
+                      component={() => (
+                        <Result
+                          status="404"
+                          title="404"
+                          subTitle="页面不存在"
+                          extra={
+                            <Button
+                              type="primary"
+                              onClick={() => window.history.go(-1)}
+                            >
+                              返回上一页
+                            </Button>
+                          }
+                        />
+                      )}
+                      exact
                     ></Route>
                   )}
-                </Switch>
-              </Suspense>
-            </Backstage>
+                </Suspense>
+              </Backstage>
+            </Route>
+            <Redirect from="*" to="/error/404" />
           </Switch>
         </ErrorBoundary>
       </Suspense>

@@ -22,12 +22,17 @@
   margin: 0;
 }
 
+.v-menu .v-menu-style li.ant-menu-item {
+  margin-bottom: 0;
+}
+
 .v-menu .v-menu-style li .ant-menu-submenu-title {
   display: flex;
   align-items: center;
   height: 40px;
   line-height: normal;
   margin: 0;
+  color: rgba(0, 0, 0, 0.85);
 }
 
 .v-menu .v-menu-style li a::before {
@@ -54,10 +59,37 @@
   opacity: 0;
 }
 
+.v-menu .v-menu-style li.ant-menu-item-active,
 .v-menu .v-menu-style li .ant-menu-submenu-title:hover,
 .v-menu .v-menu-style li .ant-menu-item-only-child:hover {
   background-color: #dcdcdc;
   color: rgba(0, 0, 0, 0.85);
+}
+
+.v-menu .v-menu-style li.ant-menu-item-active i,
+.v-menu .v-menu-style li .ant-menu-submenu-title:hover i,
+.v-menu .v-menu-style li .ant-menu-item-only-child:hover i {
+  color: inherit;
+}
+
+.v-menu .v-menu-style li a:hover {
+  color: rgba(0, 0, 0, 0.85);
+}
+
+.v-menu .v-menu-style li.ant-menu-submenu-selected .ant-menu-submenu-title {
+  color: #1890ff;
+}
+
+.v-menu .v-menu-style li.ant-menu-submenu-selected .ant-menu-submenu-title i {
+  color: inherit;
+}
+
+.v-menu .v-menu-style li.ant-menu-item-selected {
+  color: rgba(0, 0, 0, 0.85);
+}
+
+.v-menu .v-menu-style li.ant-menu-item-selected a {
+  color: inherit;
 }
 
 .v-menu .v-menu-style.ant-menu-inline-collapsed {
@@ -87,4 +119,41 @@
 
 .v-menu-popup-sub .ant-menu-vertical li:hover a {
   color: inherit;
+}
+
+.v-menu-popup-sub .ant-menu-vertical .ant-menu-item {
+  margin-bottom: 0;
+}
+
+.v-menu-popup-sub .ant-menu-item-selected {
+  background: none;
+  color: rgba(0, 0, 0, 0.85);
+}
+
+.v-menu-popup-sub .ant-menu-item-selected a {
+  color: inherit;
+}
+
+.v-menu-popup-sub .ant-menu-item-selected a::before {
+  top: 50%;
+  left: 0;
+  width: 6px;
+  height: 24px;
+  position: absolute;
+  transform: scale3d(0, 0, 0);
+  margin-top: -12px;
+  transition: all 250ms cubic-bezier(0.7, 0.1, 0.33, 1) 0ms;
+  background-color: #1890ff;
+}
+
+.v-menu-popup-sub .ant-menu-item-selected.ant-menu-item-selected {
+  background: none;
+}
+
+.v-menu-popup-sub .ant-menu-item-selected.ant-menu-item-selected a::before {
+  transform: scale3d(1, 1, 1);
+}
+
+.v-menu-popup-sub .ant-menu-item-selected.ant-menu-item-selected::after {
+  opacity: 0;
 }
