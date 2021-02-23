@@ -9,6 +9,7 @@ import SubMenu from "antd/lib/menu/SubMenu";
 import classNames from "classnames";
 import React from "react";
 import { Link } from "react-router-dom";
+import VAvatar from "./avatar";
 import "./style/menu.style.scss";
 
 interface VMenuPropTypes {
@@ -66,22 +67,31 @@ class VMemu extends React.Component<VMenuPropTypes, any> {
   }
   render() {
     return (
-      <div className="v-menu">
-        <div
-          className={classNames("toggle-menu", {
-            "toggle-menu-collapsed": this.props.collapsed,
-          })}
-          onClick={this.toggle}
-        >
-          <MenuOutlined />
+      <div className="v-navigation">
+        <div className="v-navigation-header">
+          <div
+            className={classNames("toggle-menu", {
+              "toggle-menu-collapsed": this.props.collapsed,
+            })}
+            onClick={this.toggle}
+          >
+            <MenuOutlined />
+          </div>
         </div>
-        <Menu
-          className="v-menu-style"
-          mode="inline"
-          selectedKeys={this.findMenuSelected()}
-        >
-          {this.handleRenderMenuItem(this.state.menu)}
-        </Menu>
+        <div className="v-navigation-content">
+          <Menu
+            className="v-menu-style"
+            mode="inline"
+            selectedKeys={this.findMenuSelected()}
+          >
+            {this.handleRenderMenuItem(this.state.menu)}
+          </Menu>
+        </div>
+        <div className="v-navigation-footer">
+          <Menu className="v-menu-style" mode="inline">
+            <Menu.Item icon={<VAvatar />}></Menu.Item>
+          </Menu>
+        </div>
       </div>
     );
   }

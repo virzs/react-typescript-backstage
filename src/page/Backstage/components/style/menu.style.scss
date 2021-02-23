@@ -33,77 +33,99 @@ $backgroundColor: #dcdcdc;
   }
 }
 
-.v-menu {
-  .toggle-menu {
-    cursor: pointer;
-    transition: 0.3s;
-    font-size: 14px;
-    @include menu-item-style();
-    &:hover {
-      background-color: $backgroundColor;
-    }
-    &.toggle-menu-collapsed {
-      font-size: 16px;
-      padding: 0 calc(50% - 16px / 2);
+// 导航整体
+.v-navigation {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  // 导航头
+  .v-navigation-header {
+    display: flex;
+    flex-direction: column;
+    // 导航收缩按钮样式
+    .toggle-menu {
+      cursor: pointer;
+      transition: 0.3s;
+      font-size: 14px;
+      @include menu-item-style();
+      &:hover {
+        background-color: $backgroundColor;
+      }
+      &.toggle-menu-collapsed {
+        font-size: 16px;
+        padding: 0 calc(50% - 16px / 2);
+      }
     }
   }
-  .v-menu-style {
-    li {
-      margin: 0;
-      &.ant-menu-item {
-        margin-bottom: 0;
-      }
-      .ant-menu-submenu-title {
-        display: flex;
-        align-items: center;
-        height: 40px;
-        line-height: normal;
+  // 导航内容
+  .v-navigation-content {
+    flex: 1 1 0%;
+    overflow: hidden auto;
+    .v-menu-style {
+      li {
         margin: 0;
-        color: $color;
-      }
-      @include menu-item-selected-style();
-      &.ant-menu-item-active,
-      .ant-menu-submenu-title:hover,
-      .ant-menu-item-only-child:hover {
-        background-color: $backgroundColor;
-        color: $color;
-        i {
-          color: inherit;
+        &.ant-menu-item {
+          margin-bottom: 0;
         }
-      }
-      a:hover {
-        color: $color;
-      }
-      &.ant-menu-submenu-selected {
         .ant-menu-submenu-title {
-          color: $selectedColor;
+          display: flex;
+          align-items: center;
+          height: 40px;
+          line-height: normal;
+          margin: 0;
+          color: $color;
+        }
+        @include menu-item-selected-style();
+        &.ant-menu-item-active,
+        .ant-menu-submenu-title:hover,
+        .ant-menu-item-only-child:hover {
+          background-color: $backgroundColor;
+          color: $color;
           i {
             color: inherit;
           }
         }
-      }
-      &.ant-menu-item-selected {
-        color: $color;
-        a {
-          color: inherit;
+        a:hover {
+          color: $color;
+        }
+        &.ant-menu-submenu-selected {
+          .ant-menu-submenu-title {
+            color: $selectedColor;
+            i {
+              color: inherit;
+            }
+          }
+        }
+        &.ant-menu-item-selected {
+          color: $color;
+          a {
+            color: inherit;
+          }
         }
       }
-    }
-    &.ant-menu-inline-collapsed {
-      width: 44px;
-      li {
-        padding: 0 calc(50% - 16px / 2);
-        .ant-menu-submenu-title:hover {
-          background: none;
-        }
-        &.ant-menu-submenu-open:hover {
-          background-color: $backgroundColor;
+      &.ant-menu-inline-collapsed {
+        width: 44px;
+        li {
+          padding: 0 calc(50% - 16px / 2);
+          .ant-menu-submenu-title:hover {
+            background: none;
+          }
+          &.ant-menu-submenu-open:hover {
+            background-color: $backgroundColor;
+          }
         }
       }
     }
   }
+  // 导航底部
+  .v-navigation-footer {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
+// 导航收缩时浮动子菜单样式
 .v-menu-popup-sub {
   .ant-menu-vertical {
     li {
