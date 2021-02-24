@@ -89,7 +89,10 @@ class VMemu extends React.Component<VMenuPropTypes, any> {
         </div>
         <div className="v-navigation-footer">
           <Menu className="v-menu-style" mode="inline">
-            <Menu.Item icon={<VAvatar />}></Menu.Item>
+            <Menu.Item
+              className="menu-with-avatar"
+              icon={<VAvatar />}
+            ></Menu.Item>
           </Menu>
         </div>
       </div>

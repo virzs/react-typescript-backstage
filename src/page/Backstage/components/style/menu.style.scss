@@ -33,6 +33,64 @@ $backgroundColor: #dcdcdc;
   }
 }
 
+@mixin menu-style-in-content-and-footer {
+  .v-menu-style {
+    li {
+      margin: 0;
+      &.ant-menu-item {
+        margin-bottom: 0;
+      }
+      .ant-menu-submenu-title {
+        display: flex;
+        align-items: center;
+        height: 40px;
+        line-height: normal;
+        margin: 0;
+        color: $color;
+      }
+      @include menu-item-selected-style();
+      &.ant-menu-item-active,
+      .ant-menu-submenu-title:hover,
+      .ant-menu-item-only-child:hover {
+        background-color: $backgroundColor;
+        color: $color;
+        i {
+          color: inherit;
+        }
+      }
+      a:hover {
+        color: $color;
+      }
+      &.ant-menu-submenu-selected {
+        .ant-menu-submenu-title {
+          color: $selectedColor;
+          i {
+            color: inherit;
+          }
+        }
+      }
+      &.ant-menu-item-selected {
+        color: $color;
+        a {
+          color: inherit;
+        }
+      }
+    }
+    &.ant-menu-inline-collapsed {
+      width: 44px;
+      li {
+        padding: 0 calc(50% - 16px / 2);
+        .ant-menu-submenu-title:hover {
+          background: none;
+        }
+        &.ant-menu-submenu-open:hover {
+          background-color: $backgroundColor;
+        }
+      }
+    }
+  }
+}
+
 // 导航整体
 .v-navigation {
   display: flex;
@@ -62,66 +120,19 @@ $backgroundColor: #dcdcdc;
   .v-navigation-content {
     flex: 1 1 0%;
     overflow: hidden auto;
-    .v-menu-style {
-      li {
-        margin: 0;
-        &.ant-menu-item {
-          margin-bottom: 0;
-        }
-        .ant-menu-submenu-title {
-          display: flex;
-          align-items: center;
-          height: 40px;
-          line-height: normal;
-          margin: 0;
-          color: $color;
-        }
-        @include menu-item-selected-style();
-        &.ant-menu-item-active,
-        .ant-menu-submenu-title:hover,
-        .ant-menu-item-only-child:hover {
-          background-color: $backgroundColor;
-          color: $color;
-          i {
-            color: inherit;
-          }
-        }
-        a:hover {
-          color: $color;
-        }
-        &.ant-menu-submenu-selected {
-          .ant-menu-submenu-title {
-            color: $selectedColor;
-            i {
-              color: inherit;
-            }
-          }
-        }
-        &.ant-menu-item-selected {
-          color: $color;
-          a {
-            color: inherit;
-          }
-        }
-      }
-      &.ant-menu-inline-collapsed {
-        width: 44px;
-        li {
-          padding: 0 calc(50% - 16px / 2);
-          .ant-menu-submenu-title:hover {
-            background: none;
-          }
-          &.ant-menu-submenu-open:hover {
-            background-color: $backgroundColor;
-          }
-        }
-      }
-    }
+    @include menu-style-in-content-and-footer();
   }
   // 导航底部
   .v-navigation-footer {
     display: flex;
     flex-direction: column;
+    @include menu-style-in-content-and-footer();
+    .menu-with-avatar {
+      .vavatar-box {
+        margin-top: 8px;
+        margin-left: -5px;
+      }
+    }
   }
 }
 
