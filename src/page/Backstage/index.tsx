@@ -18,12 +18,10 @@ class Backstage extends React.Component<any, any> {
     return (
       <Layout className="backstage-page">
         {/* 顶栏 */}
-        <Header className="backstage-header">
-          <VAvatar></VAvatar>
-        </Header>
         <Layout>
           {/* 侧边栏 */}
           <Sider
+            className="backstage-sider"
             theme="light"
             collapsedWidth={44}
             trigger={null}
@@ -37,6 +35,9 @@ class Backstage extends React.Component<any, any> {
           </Sider>
           {/* 内容 */}
           <Content className="backstage-content">
+            <Header className="backstage-header">
+              {/* <VAvatar></VAvatar> */}
+            </Header>
             <Card>{this.props.children}</Card>
           </Content>
         </Layout>
