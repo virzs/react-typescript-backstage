@@ -1,25 +1,18 @@
 import { me } from "@/api/auth/auth";
+import { LOGINOUT_TYPE, UserLoginout } from "@/store/actions/user.action";
 import { Dropdown, Menu } from "antd";
 import Avatar from "antd/lib/avatar/avatar";
 import React from "react";
+import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import "./style/avatar.style.scss";
 
 interface VAvatarPropTypes {
   mode?: string;
+  loginout: (action: LOGINOUT_TYPE) => void;
 }
 
-const menu = () => {
-  return (
-    <Menu>
-      <Menu.Item>
-        <Link to="">注销</Link>
-      </Menu.Item>
-    </Menu>
-  );
-};
-
-export default class VAvatar extends React.Component<VAvatarPropTypes, any> {
+class VAvatar extends React.Component<VAvatarPropTypes, any> {
   constructor(props: VAvatarPropTypes) {
     super(props);
     this.state = {
@@ -34,10 +27,21 @@ export default class VAvatar extends React.Component<VAvatarPropTypes, any> {
       this.setState({ avatarSrc: res.data.avatar });
     });
   };
+
+  menu = () => {
+    return (
+      <Menu>
+        <Menu.Item onClick={() => this.props.loginout(UserLoginout())}>
+          注销
+        </Menu.Item>
+      </Menu>
+    );
+  };
+
   render() {
     return (
       <div className="vavatar-box">
-        <Dropdown overlay={menu} placement="bottomCenter">
+        <Dropdown overlay={this.menu} placement="bottomCenter">
           <Avatar
             shape="square"
             size="small"
@@ -48,3 +52,13 @@ export default class VAvatar extends React.Component<VAvatarPropTypes, any> {
     );
   }
 }
+
+const mapDispatchToProps = (dispatch: (arg0: any) => void) => {
+  return {
+    loginout: (action: LOGINOUT_TYPE) => {
+      dispatch(action);
+    },
+  };
+};
+
+export default connect(null, mapDispatchToProps)(VAvatar);

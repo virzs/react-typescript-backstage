@@ -4,7 +4,7 @@ import FormItem from "antd/lib/form/FormItem";
 import React from "react";
 import "./style/login.style.scss";
 import { login as loginApi } from "@/api/auth/auth";
-import { UserLogin } from "@/store/actions/user.action";
+import { LOGIN_TYPE, UserLogin } from "@/store/actions/user.action";
 import { connect } from "react-redux";
 import { treeList } from "@/api/system/menu";
 import { SessionStorage } from "@/utils/storage";
@@ -72,7 +72,7 @@ class Login extends React.Component<any, any> {
 
 const mapDispatchToProps = (dispatch: (arg0: any) => void) => {
   return {
-    sendAction: (action: any) => {
+    sendAction: (action: LOGIN_TYPE) => {
       dispatch(action);
     },
   };
