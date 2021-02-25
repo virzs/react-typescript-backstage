@@ -33,20 +33,7 @@ $backgroundColor: #dcdcdc;
   }
 }
 
-.v-menu {
-  .toggle-menu {
-    cursor: pointer;
-    transition: 0.3s;
-    font-size: 14px;
-    @include menu-item-style();
-    &:hover {
-      background-color: $backgroundColor;
-    }
-    &.toggle-menu-collapsed {
-      font-size: 16px;
-      padding: 0 calc(50% - 16px / 2);
-    }
-  }
+@mixin menu-style-in-content-and-footer {
   .v-menu-style {
     li {
       margin: 0;
@@ -104,6 +91,52 @@ $backgroundColor: #dcdcdc;
   }
 }
 
+// 导航整体
+.v-navigation {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  // 导航头
+  .v-navigation-header {
+    display: flex;
+    flex-direction: column;
+    // 导航收缩按钮样式
+    .toggle-menu {
+      cursor: pointer;
+      transition: 0.3s;
+      font-size: 14px;
+      @include menu-item-style();
+      &:hover {
+        background-color: $backgroundColor;
+      }
+      &.toggle-menu-collapsed {
+        font-size: 16px;
+        padding: 0 calc(50% - 16px / 2);
+      }
+    }
+  }
+  // 导航内容
+  .v-navigation-content {
+    flex: 1 1 0%;
+    overflow: hidden auto;
+    @include menu-style-in-content-and-footer();
+  }
+  // 导航底部
+  .v-navigation-footer {
+    display: flex;
+    flex-direction: column;
+    @include menu-style-in-content-and-footer();
+    .menu-with-avatar {
+      .vavatar-box {
+        margin-top: 8px;
+        margin-left: -5px;
+      }
+    }
+  }
+}
+
+// 导航收缩时浮动子菜单样式
 .v-menu-popup-sub {
   .ant-menu-vertical {
     li {

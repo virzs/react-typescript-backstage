@@ -165,7 +165,7 @@ class Menu extends React.Component<null, any> {
       }
       this.setState({
         menu,
-        detail: detail ? detail : menu[0],
+        detail: detail.id ? detail : menu[0],
         treeLoading: false,
         detailLoading: false,
       });
