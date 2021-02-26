@@ -8,22 +8,22 @@ import { LocalStorage } from "@/utils/storage";
 
 type ModifyAction = LOGIN_TYPE | LOGINOUT_TYPE;
 
-export const userReducer = (
-  state: object = {},
+export const userLogin = (
+  state: boolean = false,
   action: ModifyAction
-): object => {
+): boolean => {
   switch (action.type) {
     case USER_LOGIN:
       const { accessToken, refreshToken, ...userInfo } = action.info;
       LocalStorage.set("access_token", accessToken);
       LocalStorage.set("refresh_token", refreshToken);
       LocalStorage.set("user_info", userInfo);
-      return Object.assign({}, state, action);
+      return true;
     case USER_LOGINOUT:
       LocalStorage.remove("access_token");
       LocalStorage.remove("refresh_token");
       LocalStorage.remove("user_info");
-      return state;
+      return false;
     default:
       return state;
   }

@@ -1,9 +1,14 @@
 import { combineReducers, createStore } from "redux";
-import { userReducer } from "./reducers/user.reducer";
+import { userLogin } from "./reducers/user.reducer";
 
 /**
  * Store文件
  */
-const store = createStore(combineReducers({ userReducer }));
+
+const appReducers = combineReducers({ userLogin });
+
+const store = createStore(appReducers, {
+  userLogin: false,
+});
 
 export default store;
