@@ -1,4 +1,6 @@
 import {
+  CHECK_LOGIN_STATE,
+  CHECK_LOGIN_STATE_TYPE,
   LOGINOUT_TYPE,
   LOGIN_TYPE,
   USER_LOGIN,
@@ -6,7 +8,7 @@ import {
 } from "./../actions/user.action";
 import { LocalStorage, SessionStorage } from "@/utils/storage";
 
-type ModifyAction = LOGIN_TYPE | LOGINOUT_TYPE;
+type ModifyAction = LOGIN_TYPE | LOGINOUT_TYPE | CHECK_LOGIN_STATE_TYPE;
 
 export const userLogin = (
   state: boolean = false,
@@ -24,6 +26,9 @@ export const userLogin = (
       LocalStorage.remove("refresh_token");
       SessionStorage.remove("user_info");
       return false;
+    case CHECK_LOGIN_STATE:
+      const info = SessionStorage.get("user_info");
+      return info ? true : false;
     default:
       return state;
   }
