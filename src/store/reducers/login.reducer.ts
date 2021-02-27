@@ -1,14 +1,14 @@
 import {
   CHECK_LOGIN_STATE,
-  CHECK_LOGIN_STATE_TYPE,
-  LOGINOUT_TYPE,
-  LOGIN_TYPE,
+  checkLoginStateType,
+  loginoutType,
+  loginType,
   USER_LOGIN,
   USER_LOGINOUT,
-} from "./../actions/user.action";
+} from "../actions/login.action";
 import { LocalStorage, SessionStorage } from "@/utils/storage";
 
-type ModifyAction = LOGIN_TYPE | LOGINOUT_TYPE | CHECK_LOGIN_STATE_TYPE;
+type ModifyAction = loginType | loginoutType | checkLoginStateType;
 
 export const userLogin = (
   state: boolean = false,

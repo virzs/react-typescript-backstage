@@ -4,7 +4,7 @@ import FormItem from "antd/lib/form/FormItem";
 import React from "react";
 import "./style/login.style.scss";
 import { login as loginApi } from "@/api/auth/auth";
-import { UserLogin } from "@/store/actions/user.action";
+import { UserLogin } from "@/store/actions/login.action";
 import { connect } from "react-redux";
 import { treeList } from "@/api/system/menu";
 import { SessionStorage } from "@/utils/storage";

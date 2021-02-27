@@ -1,15 +1,14 @@
 import { me } from "@/api/auth/auth";
-import { LOGINOUT_TYPE, UserLoginout } from "@/store/actions/user.action";
+import { loginoutType, UserLoginout } from "@/store/actions/login.action";
 import { Dropdown, Menu } from "antd";
 import Avatar from "antd/lib/avatar/avatar";
 import React from "react";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
 import "./style/avatar.style.scss";
 
 interface VAvatarPropTypes {
   mode?: string;
-  loginout: (action: LOGINOUT_TYPE) => void;
+  loginout: (action: loginoutType) => void;
 }
 
 class VAvatar extends React.Component<VAvatarPropTypes, any> {
@@ -55,7 +54,7 @@ class VAvatar extends React.Component<VAvatarPropTypes, any> {
 
 const mapDispatchToProps = (dispatch: (arg0: any) => void) => {
   return {
-    loginout: (action: LOGINOUT_TYPE) => {
+    loginout: (action: loginoutType) => {
       dispatch(action);
     },
   };

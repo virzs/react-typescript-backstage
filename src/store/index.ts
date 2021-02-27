@@ -1,5 +1,5 @@
 import { combineReducers, createStore } from "redux";
-import { userLogin } from "./reducers/user.reducer";
+import { userLogin } from "./reducers/login.reducer";
 import { persistReducer, persistStore } from "redux-persist";
 import storageSession from "redux-persist/lib/storage";
 
