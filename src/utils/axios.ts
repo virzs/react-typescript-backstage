@@ -1,7 +1,7 @@
 import { refresh } from "./../api/auth/auth";
 import { message } from "antd";
 import axios from "axios";
-import { LocalStorage } from "./storage";
+import { SessionStorage } from "./storage";
 
 export interface requestOptionsType {
   headers?: object;
@@ -23,7 +23,7 @@ const instance = axios.create({
 //在请求或响应被 then 或 catch 处理前拦截。
 instance.interceptors.request.use(
   (config) => {
-    const access_token = LocalStorage.get("access_token");
+    const access_token = SessionStorage.get("access_token");
     //本地存储中存在token且没有携带token
     if (access_token) {
       config.headers["access_token"] = access_token;
@@ -52,7 +52,7 @@ instance.interceptors.response.use(
         return refresh()
           .then((res) => {
             const { access_token } = res.data;
-            LocalStorage.set("access_token", access_token);
+            SessionStorage.set("access_token", access_token);
             requests.forEach((cb: any) => cb(access_token));
             requests = []; // 重新请求完清空
             config.headers["access_token"] = access_token;

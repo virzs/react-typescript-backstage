@@ -1,9 +1,32 @@
 import { combineReducers, createStore } from "redux";
-import { userReducer } from "./reducers/user.reducer";
+import { userLogin } from "./reducers/login.reducer";
+import { currentRoute } from "./reducers/route.reducer";
+import { persistReducer, persistStore } from "redux-persist";
+import storageSession from "redux-persist/lib/storage";
 
 /**
  * Store文件
  */
-const store = createStore(combineReducers({ userReducer }));
+
+// redux数据持久化配置
+const reduxPersistConfig = {
+  key: "root",
+  storage: storageSession, //缓存方式
+  version: 0.1,
+  blacklist: [], // 黑名单
+};
+
+// 合并reducers
+const appReducers = combineReducers({ userLogin, currentRoute });
+
+// 将合并的reducers添加到持久化配置中
+// 将该函数验证设为any或具体类型可跳过persistStore函数的类型验证
+// persistReducer<any,any>(xxx,xxx)
+const appPersistReducers = persistReducer(reduxPersistConfig, appReducers);
+
+// 创建store
+const store = createStore(appPersistReducers);
+
+export const persistor = persistStore(store);
 
 export default store;

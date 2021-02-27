@@ -1,6 +1,6 @@
 import { Card, Layout } from "antd";
 import React from "react";
-import VAvatar from "./components/avatar";
+import { ContentHeader } from "./components/contentHeader";
 import VMemu from "./components/menu";
 import "./style/backstage.style.scss";
 
@@ -36,7 +36,7 @@ class Backstage extends React.Component<any, any> {
           {/* 内容 */}
           <Content className="backstage-content">
             <Header className="backstage-header">
-              {/* <VAvatar></VAvatar> */}
+              <ContentHeader />
             </Header>
             <Card>{this.props.children}</Card>
           </Content>
