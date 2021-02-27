@@ -13,6 +13,8 @@ import { GlobalLoading } from "@/components/Global_Loading/GlobalLoading";
 import { ErrorBoundary } from "@/components/Error_Boundaries/ErrorBoundaries";
 import { LocalLoading } from "@/components/Local_Loading/LocalLoading";
 import { backstageRouterTree } from "@/data/backstage.router";
+import { setCurrent } from "@/store/actions/route.action";
+import { connect } from "react-redux";
 
 export interface routerType {
   readonly name: string;
@@ -113,6 +115,8 @@ class VRouter extends React.Component<any, any> {
           this.state.currentRouter.id === currentRouter.id
         )
           return;
+        // 将当前路由信息储存到redux
+        this.props.setCurrentRoute(currentRouter);
         this.setState({
           currentRouter: {
             ...currentRouter,
@@ -176,5 +180,14 @@ class VRouter extends React.Component<any, any> {
     );
   }
 }
-export default withRouter(VRouter);
+
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    setCurrentRoute: (route: any) => {
+      dispatch(setCurrent(route));
+    },
+  };
+};
+
+export default connect(null, mapDispatchToProps)(withRouter(VRouter));
 export { pageRoutes };
