@@ -1,5 +1,6 @@
 import { combineReducers, createStore } from "redux";
 import { userLogin } from "./reducers/login.reducer";
+import { currentRoute } from "./reducers/route.reducer";
 import { persistReducer, persistStore } from "redux-persist";
 import storageSession from "redux-persist/lib/storage";
 
@@ -11,11 +12,12 @@ import storageSession from "redux-persist/lib/storage";
 const reduxPersistConfig = {
   key: "root",
   storage: storageSession, //缓存方式
+  version: 0.1,
   blacklist: [], // 黑名单
 };
 
 // 合并reducers
-const appReducers = combineReducers({ userLogin });
+const appReducers = combineReducers({ userLogin, currentRoute });
 
 // 将合并的reducers添加到持久化配置中
 // 将该函数验证设为any或具体类型可跳过persistStore函数的类型验证
