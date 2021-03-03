@@ -15,6 +15,7 @@ import { LocalLoading } from "@/components/Local_Loading/LocalLoading";
 import { backstageRouterTree } from "@/data/backstage.router";
 import { setCurrent } from "@/store/actions/route.action";
 import { connect } from "react-redux";
+import { useSetWebTitle } from "@/hooks/global.hook";
 
 export interface routerType {
   readonly name: string;
@@ -117,6 +118,7 @@ class VRouter extends React.Component<any, any> {
           return;
         // 将当前路由信息储存到redux
         this.props.setCurrentRoute(currentRouter);
+        useSetWebTitle(currentRouter.name);
         this.setState({
           currentRouter: {
             ...currentRouter,
